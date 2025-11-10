@@ -5,20 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bfbf55da-dc69-4aee-9b64-ba4a99eadf3c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/lib/pages/favorites/favorites_page.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/giveFeedback/give_feedback_page.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/home/home_page.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/noPlacesFound/no_places_found_page.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/placeDetails/place_details_page.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/profile/profile_page.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/recentSearches/recent_searches_page.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/reportBug/report_bug_page.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/settings/settings_page.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/signIn/sign_in_page.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/signUp/sign_up_page.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/pages/suggestions/suggestions_page.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/utils/colors.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/utils/paddings.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/utils/text_styles.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
