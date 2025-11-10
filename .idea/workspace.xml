@@ -5,22 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bfbf55da-dc69-4aee-9b64-ba4a99eadf3c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/assets/fonts/Poppins-Black.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/fonts/Poppins-Bold.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/fonts/Poppins-Light.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/fonts/Poppins-Medium.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/fonts/Poppins-Regular.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/fonts/Poppins-SemiBold.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/temp_image_1.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/temp_image_2.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/temp_image_3.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/assets/fonts/Poppings-Regular.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/place_card.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/assets/fonts/Poppins-Bold.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/assets/fonts/Poppins-Medium.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/layout/main_shell.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/layout/main_shell.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/pages/home/home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/home/home_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/pages/placeDetails/place_details_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/placeDetails/place_details_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/widgets/place_card.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/place_card.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
