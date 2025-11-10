@@ -20,7 +20,7 @@ class _MainShellState extends State<MainShell> {
   final _titles = ['Home', 'Favorites', 'Suggestions', 'Profile'];
 
   final _pages = const [
-    HomePage(title: "LocalAI",),
+    HomePage(),
     FavoritesPage(),
     SuggestionsPage(),
     ProfilePage(),

@@ -5,14 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bfbf55da-dc69-4aee-9b64-ba4a99eadf3c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/lib/layout/main_shell.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/widgets/custom_app_bar.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/fonts/Poppins-Black.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/fonts/Poppins-Bold.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/fonts/Poppins-Light.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/fonts/Poppins-Medium.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/fonts/Poppins-Regular.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/fonts/Poppins-SemiBold.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/temp_image_1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/temp_image_2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/temp_image_3.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/pages/favorites/favorites_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/favorites/favorites_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/assets/fonts/Poppings-Regular.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/place_card.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/assets/fonts/Poppins-Bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/assets/fonts/Poppins-Medium.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/layout/main_shell.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/layout/main_shell.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/home/home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/home/home_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/pages/profile/profile_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/profile/profile_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/pages/suggestions/suggestions_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/suggestions/suggestions_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,6 +60,15 @@
     "show.migrate.to.gradle.popup": "false"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/assets/images" />
+      <recent name="$PROJECT_DIR$/lib" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/lib/assets/fonts" />
+      <recent name="$PROJECT_DIR$/lib/assets" />
+    </key>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="bfbf55da-dc69-4aee-9b64-ba4a99eadf3c" name="Changes" comment="" />
