@@ -10,10 +10,10 @@ class SuggestionsPage extends StatefulWidget {
 class _SuggestionsPageState extends State<SuggestionsPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Suggestions")),
-      body: const Center(
-        child: Text('Suggestions Page'),
+    return const Center(
+      child: Text(
+        'Suggestions Page',
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
       ),
     );
   }

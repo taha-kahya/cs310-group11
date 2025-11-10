@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:locai/utils/text_styles.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -12,11 +13,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(widget.title),
-        )
+    return const Center(
+      child: Text(
+        'Welcome to LocAI!',
+        style: AppTextStyles.body,
+      ),
     );
   }
 }

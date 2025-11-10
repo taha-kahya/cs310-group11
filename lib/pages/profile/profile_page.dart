@@ -10,10 +10,10 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Profile")),
-      body: const Center(
-        child: Text('Profile Page'),
+    return const Center(
+      child: Text(
+        'Profile Page',
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
       ),
     );
   }

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:locai/pages/home/home_page.dart';
+import 'package:locai/layout/main_shell.dart';
 import 'package:locai/pages/signIn/sign_in_page.dart';
 import 'package:locai/pages/signUp/sign_up_page.dart';
 import 'package:locai/pages/placeDetails/place_details_page.dart';
-import 'package:locai/pages/favorites/favorites_page.dart';
-import 'package:locai/pages/suggestions/suggestions_page.dart';
-import 'package:locai/pages/profile/profile_page.dart';
 import 'package:locai/pages/settings/settings_page.dart';
 import 'package:locai/pages/noPlacesFound/no_places_found_page.dart';
 import 'package:locai/pages/recentSearches/recent_searches_page.dart';
@@ -24,32 +21,34 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'LocAI',
       theme: ThemeData(
-          fontFamily: 'Poppins',
-          textTheme: const TextTheme(
-            headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-            headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            headlineSmall: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            bodyLarge: TextStyle(fontSize: 16),
-            bodyMedium: TextStyle(fontSize: 14),
-            bodySmall: TextStyle(fontSize: 12),
-          )
+        fontFamily: 'Poppins',
+        textTheme: const TextTheme(
+          headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          headlineSmall: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          bodyLarge: TextStyle(fontSize: 16),
+          bodyMedium: TextStyle(fontSize: 14),
+          bodySmall: TextStyle(fontSize: 12),
+        ),
       ),
+
+      // Default page
       initialRoute: '/home',
+
       routes: {
-        '/home':(context) => const HomePage(title: 'LocAI'),
-        '/sign-in':(context) => const SignInPage(),
-        '/sign-up':(context) => const SignUpPage(),
-        '/place-details':(context) => const PlaceDetailsPage(),
-        '/favorites':(context) => const FavoritesPage(),
-        '/suggestions':(context) => const SuggestionsPage(),
-        '/profile':(context) => const ProfilePage(),
-        '/settings':(context) => const SettingsPage(),
-        '/no-places-found':(context) => const NoPlacesFoundPage(),
-        '/recent-searches':(context) => const RecentSearchesPage(),
-        '/give-feedback':(context) => const GiveFeedbackPage(),
-        '/report-bug':(context) => const ReportBugPage()
+        '/home': (context) => const MainShell(initialIndex: 0),
+        '/favorites': (context) => const MainShell(initialIndex: 1),
+        '/suggestions': (context) => const MainShell(initialIndex: 2),
+        '/profile': (context) => const MainShell(initialIndex: 3),
+        '/sign-in': (context) => const SignInPage(),
+        '/sign-up': (context) => const SignUpPage(),
+        '/place-details': (context) => const PlaceDetailsPage(),
+        '/settings': (context) => const SettingsPage(),
+        '/no-places-found': (context) => const NoPlacesFoundPage(),
+        '/recent-searches': (context) => const RecentSearchesPage(),
+        '/give-feedback': (context) => const GiveFeedbackPage(),
+        '/report-bug': (context) => const ReportBugPage(),
       },
     );
   }
 }
-
