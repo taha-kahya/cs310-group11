@@ -8,6 +8,7 @@ import 'package:locai/pages/noPlacesFound/no_places_found_page.dart';
 import 'package:locai/pages/recentSearches/recent_searches_page.dart';
 import 'package:locai/pages/giveFeedback/give_feedback_page.dart';
 import 'package:locai/pages/reportBug/report_bug_page.dart';
+import 'package:locai/pages/forgot_password/forgot_password_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
       ),
 
       // Default page
-      initialRoute: '/home',
+      initialRoute: '/sign-in',
 
       routes: {
         '/home': (context) => const MainShell(initialIndex: 0),
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => const MainShell(initialIndex: 3),
         '/sign-in': (context) => const SignInPage(),
         '/sign-up': (context) => const SignUpPage(),
+        '/forgot-password': (context) => const ForgotPasswordPage(),
         '/place-details': (context) => const PlaceDetailsPage(),
         '/settings': (context) => const SettingsPage(),
         '/no-places-found': (context) => const NoPlacesFoundPage(),
