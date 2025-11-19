@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:locai/pages/giveFeedback/give_feedback_page.dart';
+import 'package:locai/pages/recentSearches/recent_searches_page.dart';
+import 'package:locai/pages/reportBug/report_bug_page.dart';
+import 'package:locai/pages/settings/settings_page.dart';
 import 'package:locai/widgets/custom_app_bar.dart';
 import 'package:locai/pages/home/home_page.dart';
 import 'package:locai/pages/favorites/favorites_page.dart';
@@ -6,7 +10,7 @@ import 'package:locai/pages/suggestions/suggestions_page.dart';
 import 'package:locai/pages/profile/profile_page.dart';
 
 class MainShell extends StatefulWidget {
-  final int initialIndex; // which tab
+  final int initialIndex;
 
   const MainShell({super.key, this.initialIndex = 0});
 
@@ -35,10 +39,7 @@ class _MainShellState extends State<MainShell> {
   void _onTabSelected(int i) {
     if (i == _index) return;
 
-    // Map each tab to a unique route name
     const routes = ['/home', '/favorites', '/suggestions', '/profile'];
-
-    // Replace current route so back stack stays clean
     Navigator.pushReplacementNamed(context, routes[i]);
   }
 
@@ -60,6 +61,59 @@ class _MainShellState extends State<MainShell> {
           ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
+      ),
+      endDrawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              child: Text(
+                "LocAI",
+                style: TextStyle(color: Colors.black, fontSize: 24),
+              ),
+            ),
+            ListTile(
+              title: const Text("Settings"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SettingsPage()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text("Recent Searches"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const RecentSearchesPage()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text("Give Feedback"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const GiveFeedbackPage()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text("Report Bug"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ReportBugPage()),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
