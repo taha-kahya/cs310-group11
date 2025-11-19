@@ -16,10 +16,12 @@ class Place {
 
 class PlaceCard extends StatefulWidget {
   final Place place;
+  final VoidCallback? onDelete;
 
   const PlaceCard({
     super.key,
     required this.place,
+    this.onDelete,
   });
 
   @override
@@ -66,19 +68,40 @@ class _PlaceCardState extends State<PlaceCard> {
               ),
               const SizedBox(width: 14),
 
-              // Text + rating + heart
+              // Text + rating + heart (+ optional delete)
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Name
-                    Text(
-                      place.name,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    // Top row: Name + optional delete icon
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            place.name,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        if (widget.onDelete != null) ...[
+                          const SizedBox(width: 4),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.delete_outline,
+                              size: 20,
+                              color: Colors.grey,
+                            ),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: widget.onDelete,
+                          ),
+                        ],
+                      ],
                     ),
+
                     const SizedBox(height: 6),
 
                     // Description
@@ -125,11 +148,9 @@ class _PlaceCardState extends State<PlaceCard> {
                             });
                           },
                           child: AnimatedSwitcher(
-                            duration:
-                            const Duration(milliseconds: 200),
+                            duration: const Duration(milliseconds: 200),
                             transitionBuilder: (child, anim) =>
-                                ScaleTransition(
-                                    scale: anim, child: child),
+                                ScaleTransition(scale: anim, child: child),
                             child: Icon(
                               _isFavorite
                                   ? Icons.favorite
