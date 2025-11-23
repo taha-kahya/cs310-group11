@@ -11,10 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // TÜM mekanlar
   late List<Place> _allPlaces;
-
-  // Filtrelenmiş liste (ekranda görünen)
   late List<Place> _filteredPlaces;
 
   String _selectedSort = 'Relevance';
@@ -48,27 +45,22 @@ class _HomePageState extends State<HomePage> {
       ),
     ];
 
-    // Başlangıçta hepsini göster
     _filteredPlaces = List.from(_allPlaces);
   }
 
-  // -------- ARAMA FONKSİYONU --------
   void _onSearchChanged(String value) {
     final query = value.toLowerCase();
 
     List<Place> results;
 
     if (query.isEmpty) {
-      // Arama kutusu boşsa hepsini göster
       results = List.from(_allPlaces);
     } else {
-      // İsimde query geçenleri filtrele
       results = _allPlaces
           .where(
               (place) => place.name.toLowerCase().contains(query))
           .toList();
 
-      // Hiç sonuç yoksa → NoPlacesFoundPage aç
       if (results.isEmpty) {
         Navigator.push(
           context,
@@ -91,13 +83,12 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // -------- SEARCH BAR --------
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: TextField(
               controller: _searchController,
               style: AppTextStyles.body,
-              onChanged: _onSearchChanged,          // 🔴 ASIL ARAMA BURADA
+              onChanged: _onSearchChanged,
               decoration: InputDecoration(
                 hintText: 'Search for the place in your mind',
                 prefixIcon: const Icon(Icons.search),
@@ -119,7 +110,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          // -------- SORT BAR --------
           Padding(
             padding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
@@ -143,7 +133,6 @@ class _HomePageState extends State<HomePage> {
                     if (value == null) return;
                     setState(() {
                       _selectedSort = value;
-                      // İstersen burada _filteredPlaces'i sıralarsın
                     });
                   },
                 ),
@@ -151,7 +140,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          // -------- RESULTS COUNT --------
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
@@ -163,7 +151,6 @@ class _HomePageState extends State<HomePage> {
 
           const SizedBox(height: 8),
 
-          // -------- LIST OF CARDS --------
           Expanded(
             child: ListView.builder(
               padding:

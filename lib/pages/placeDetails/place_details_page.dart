@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:locai/widgets/place_card.dart';
+import 'package:locai/utils/text_styles.dart';
 
 class PlaceDetailsPage extends StatelessWidget {
   const PlaceDetailsPage({super.key});
@@ -26,10 +27,7 @@ class PlaceDetailsPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.black),
         title: Text(
           place.name,
-          style: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w700,
-          ),
+          style: AppTextStyles.subheading
         ),
       ),
 

@@ -40,17 +40,17 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 30),
+            const SizedBox(height: 16),
 
             Text(
               "Tell us what you think about our app",
               style: AppTextStyles.heading.copyWith(
                 color: AppColors.primary,
-                fontSize: 50,
+                fontSize: 36,
               ),
             ),
 
-            const SizedBox(height: 50),
+            const SizedBox(height: 16),
 
             Container(
               height: 300,
@@ -74,7 +74,7 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
               ),
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 32),
 
             Text(
               "Rate our app",

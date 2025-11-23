@@ -46,12 +46,12 @@ class _ReportBugPageState extends State<ReportBugPage> {
             Text(
               "Have you detected a bug? Let us know.",
               style: AppTextStyles.heading.copyWith(
-                fontSize: 50,
+                fontSize: 36,
                 color: AppColors.primary,
               ),
             ),
 
-            const SizedBox(height: 50),
+            const SizedBox(height: 16),
 
             Container(
               height: 300,
@@ -75,7 +75,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
               ),
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 32),
 
             Text(
               "Select priority level",

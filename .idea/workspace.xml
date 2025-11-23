@@ -7,6 +7,7 @@
     <list default="true" id="bfbf55da-dc69-4aee-9b64-ba4a99eadf3c" name="Changes" comment="">
 <<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+<<<<<<< Updated upstream
       <change beforePath="$PROJECT_DIR$/lib/pages/settings/settings_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/settings/settings_page.dart" afterDir="false" />
 =======
       <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
@@ -15,6 +16,12 @@
       <change beforePath="$PROJECT_DIR$/lib/pages/home/home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/home/home_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/noPlacesFound/no_places_found_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/noPlacesFound/no_places_found_page.dart" afterDir="false" />
 >>>>>>> 904e04f (favourites ve noplaces found pages added)
+=======
+      <change beforePath="$PROJECT_DIR$/lib/pages/giveFeedback/give_feedback_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/giveFeedback/give_feedback_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/pages/placeDetails/place_details_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/placeDetails/place_details_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/pages/reportBug/report_bug_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/reportBug/report_bug_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/widgets/custom_app_bar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/custom_app_bar.dart" afterDir="false" />
+>>>>>>> Stashed changes
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

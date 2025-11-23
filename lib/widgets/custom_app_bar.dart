@@ -33,7 +33,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           : null,
       title: Text(
         title,
-        style: AppTextStyles.heading,
+        style: AppTextStyles.subheading,
       ),
       actions: showMenu
           ? [
