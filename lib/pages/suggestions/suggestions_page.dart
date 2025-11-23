@@ -30,10 +30,6 @@ class _SuggestionsPageState extends State<SuggestionsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Suggestions'),
-        centerTitle: true,
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -41,19 +37,14 @@ class _SuggestionsPageState extends State<SuggestionsPage> {
           children: [
             const Text(
               'Based on your favorites, some ideas you may like',
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 24),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 12),
             const Text(
               'Select one to search quickly',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
+              style: TextStyle(fontSize: 16, color: Colors.grey),
               textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _quickSearch,
-              child: const Text('Quick Search'),
             ),
             const SizedBox(height: 16),
             Expanded(
