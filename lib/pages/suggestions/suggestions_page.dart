@@ -17,14 +17,7 @@ class _SuggestionsPageState extends State<SuggestionsPage> {
 
   void _onSuggestionTap(String suggestion) {
     print('Selected suggestion: $suggestion');
-    // Navigator.pushNamed(context, '/home');
-  }
-
-  void _quickSearch() {
-    print('Select one to search quickly');
-    if (suggestions.isNotEmpty) {
-      _onSuggestionTap(suggestions[0]);
-    }
+    Navigator.pushNamed(context, '/home');
   }
 
   @override
@@ -35,6 +28,7 @@ class _SuggestionsPageState extends State<SuggestionsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const SizedBox(height: 12),
             const Text(
               'Based on your favorites, some ideas you may like',
               style: TextStyle(fontSize: 24),

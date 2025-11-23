@@ -4,7 +4,6 @@ import 'package:locai/pages/signIn/sign_in_page.dart';
 import 'package:locai/pages/signUp/sign_up_page.dart';
 import 'package:locai/pages/placeDetails/place_details_page.dart';
 import 'package:locai/pages/settings/settings_page.dart';
-import 'package:locai/pages/noPlacesFound/no_places_found_page.dart';
 import 'package:locai/pages/recentSearches/recent_searches_page.dart';
 import 'package:locai/pages/giveFeedback/give_feedback_page.dart';
 import 'package:locai/pages/reportBug/report_bug_page.dart';

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:locai/widgets/place_card.dart';
+import 'package:locai/state/favorites_state.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -8,199 +10,139 @@ class FavoritesPage extends StatefulWidget {
 }
 
 class _FavoritesPageState extends State<FavoritesPage> {
+  String _selectedSort = "Rating";
+
+  List<Place> _sortFavorites(List<Place> list) {
+    final sorted = List<Place>.from(list);
+
+    if (_selectedSort == "Rating") {
+      sorted.sort((a, b) => b.rating.compareTo(a.rating)); // High → Low
+    } else if (_selectedSort == "Name") {
+      sorted.sort((a, b) => a.name.compareTo(b.name)); // A → Z
+    }
+
+    return sorted;
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Dışarıdaki MainShell zaten Scaffold + AppBar + BottomNav veriyor,
-    // o yüzden burada SADECE içerik var.
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-      children: const [
-        _SortRow(),
-        SizedBox(height: 6),
-        Text(
-          '3 favorites',
-          style: TextStyle(color: Colors.black45),
-        ),
-        SizedBox(height: 16),
+    return ValueListenableBuilder<List<Place>>(
+      valueListenable: FavoritesState.instance.favorites,
+      builder: (context, favorites, _) {
+        final sortedFavorites = _sortFavorites(favorites);
 
-        // 3 tane kart (assets/images içindeki fotolar kullanılıyor)
-        FavoriteItemCard(
-          imagePath: 'assets/images/temp_image_1.jpg',
-          rating: 4.9,
-          title: 'SushiCo',
-          description:
-          'Sushico – Fresh Asian fusion with sushi, noodles, and bold flavors served in a modern, cozy setting.',
-        ),
-        SizedBox(height: 14),
-        FavoriteItemCard(
-          imagePath: 'assets/images/temp_image_2.jpg',
-          rating: 4.9,
-          title: 'RamenToGo',
-          description:
-          'RamenToGo – Quick, fresh, and flavorful ramen made for comfort on the go.',
-        ),
-        SizedBox(height: 14),
-        FavoriteItemCard(
-          imagePath: 'assets/images/temp_image_3.jpg',
-          rating: 4.6,
-          title: 'Japanese Fried Chicken',
-          description:
-          'Japanese Fried Chicken – Crispy, juicy, and flavorful bites served in a comfy, quiet place with convenient charging outlets.',
-        ),
-      ],
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+          children: [
+            _SortRow(
+              selectedSort: _selectedSort,
+              onSortChanged: (value) {
+                setState(() {
+                  _selectedSort = value;
+                });
+              },
+            ),
+
+            const SizedBox(height: 6),
+
+            Text(
+              '${sortedFavorites.length} favorites',
+              style: const TextStyle(color: Colors.black45),
+            ),
+
+            const SizedBox(height: 16),
+
+            if (sortedFavorites.isEmpty)
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 60),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(
+                        Icons.favorite_border,
+                        size: 72,
+                        color: Colors.grey,
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'No favorites yet',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Tap the heart icon on a place\non the Home tab to save it here.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black54,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else
+              for (int i = 0; i < sortedFavorites.length; i++)
+                PlaceCard(
+                  place: sortedFavorites[i],
+                  isInitiallyFavorite: true,
+                  onFavoriteChanged: (isFavorite) {
+                    if (!isFavorite) {
+                      FavoritesState.instance
+                          .setFavorite(sortedFavorites[i], false);
+                    }
+                  },
+                ),
+          ],
+        );
+      },
     );
   }
 }
 
-// --------- "Sort by  Rating ▼" satırı ----------
 class _SortRow extends StatelessWidget {
-  const _SortRow();
+  final String selectedSort;
+  final ValueChanged<String> onSortChanged;
+
+  const _SortRow({
+    required this.selectedSort,
+    required this.onSortChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: const [
-        Text(
+      children: [
+        const Text(
           'Sort by',
           style: TextStyle(color: Colors.black54, fontSize: 16),
         ),
-        SizedBox(width: 10),
-        Text(
-          'Rating',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+        const SizedBox(width: 10),
+
+        DropdownButton<String>(
+          value: selectedSort,
+          items: const [
+            DropdownMenuItem(
+              value: "Rating",
+              child: Text("Rating"),
+            ),
+            DropdownMenuItem(
+              value: "Name",
+              child: Text("Name"),
+            ),
+          ],
+          underline: const SizedBox(),
+          onChanged: (value) {
+            if (value != null) onSortChanged(value);
+          },
         ),
-        Icon(Icons.keyboard_arrow_down),
       ],
     );
   }
 }
-
-// --------- Kart widget'ı ----------
-class FavoriteItemCard extends StatelessWidget {
-  final String imagePath;
-  final double rating;
-  final String title;
-  final String description;
-
-  const FavoriteItemCard({
-    super.key,
-    required this.imagePath,
-    required this.rating,
-    required this.title,
-    required this.description,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 120,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 16,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Sol taraf: foto + rating rozeti
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(14),
-                  child: Image.asset(
-                    imagePath,
-                    width: 120,
-                    height: 96,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Positioned(
-                  top: 8,
-                  left: 8,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.star, size: 14, color: Colors.red),
-                        const SizedBox(width: 4),
-                        Text(
-                          rating.toStringAsFixed(1),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Sağ taraf: başlık + açıklama
-          Expanded(
-            child: Padding(
-              padding:
-              const EdgeInsets.only(right: 8, top: 16, bottom: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Expanded(
-                    child: Text(
-                      description,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.black54,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Sağ uç: kalp
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.favorite, color: Colors.red),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-

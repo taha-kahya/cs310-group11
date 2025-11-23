@@ -18,10 +18,18 @@ class PlaceCard extends StatefulWidget {
   final Place place;
   final VoidCallback? onDelete;
 
+  /// Whether this place starts as favorite in the UI
+  final bool isInitiallyFavorite;
+
+  /// Called whenever the heart is toggled (true = favorite, false = not)
+  final ValueChanged<bool>? onFavoriteChanged;
+
   const PlaceCard({
     super.key,
     required this.place,
     this.onDelete,
+    this.isInitiallyFavorite = false,
+    this.onFavoriteChanged,
   });
 
   @override
@@ -30,6 +38,20 @@ class PlaceCard extends StatefulWidget {
 
 class _PlaceCardState extends State<PlaceCard> {
   bool _isFavorite = false; // UI only
+
+  @override
+  void initState() {
+    super.initState();
+    _isFavorite = widget.isInitiallyFavorite;
+  }
+
+  @override
+  void didUpdateWidget(covariant PlaceCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.isInitiallyFavorite != widget.isInitiallyFavorite) {
+      _isFavorite = widget.isInitiallyFavorite;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +168,7 @@ class _PlaceCardState extends State<PlaceCard> {
                             setState(() {
                               _isFavorite = !_isFavorite;
                             });
+                            widget.onFavoriteChanged?.call(_isFavorite);
                           },
                           child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 200),
