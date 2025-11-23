@@ -46,7 +46,6 @@ class MyApp extends StatelessWidget {
         '/forgot-password': (context) => const ForgotPasswordPage(),
         '/place-details': (context) => const PlaceDetailsPage(),
         '/settings': (context) => const SettingsPage(),
-        '/no-places-found': (context) => const NoPlacesFoundPage(),
         '/recent-searches': (context) => const RecentSearchesPage(),
         '/give-feedback': (context) => const GiveFeedbackPage(),
         '/report-bug': (context) => const ReportBugPage(),

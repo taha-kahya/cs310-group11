@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:locai/widgets/place_card.dart';
 import 'package:locai/utils/text_styles.dart';
+import 'package:locai/pages/noPlacesFound/no_places_found_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,13 +11,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late List<Place> _places;
+  // TÜM mekanlar
+  late List<Place> _allPlaces;
+
+  // Filtrelenmiş liste (ekranda görünen)
+  late List<Place> _filteredPlaces;
+
   String _selectedSort = 'Relevance';
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _places = [
+
+    _allPlaces = [
       const Place(
         name: 'Sushico',
         rating: 4.9,
@@ -29,7 +37,7 @@ class _HomePageState extends State<HomePage> {
         rating: 4.9,
         description:
         'Quick, fresh, and flavorful ramen made for comfort on the go.',
-        imageUrl: "assets/images/temp_image_2.jpg"
+        imageUrl: "assets/images/temp_image_2.jpg",
       ),
       const Place(
         name: 'Japanese Fried Chicken',
@@ -39,6 +47,41 @@ class _HomePageState extends State<HomePage> {
         imageUrl: "assets/images/temp_image_3.jpg",
       ),
     ];
+
+    // Başlangıçta hepsini göster
+    _filteredPlaces = List.from(_allPlaces);
+  }
+
+  // -------- ARAMA FONKSİYONU --------
+  void _onSearchChanged(String value) {
+    final query = value.toLowerCase();
+
+    List<Place> results;
+
+    if (query.isEmpty) {
+      // Arama kutusu boşsa hepsini göster
+      results = List.from(_allPlaces);
+    } else {
+      // İsimde query geçenleri filtrele
+      results = _allPlaces
+          .where(
+              (place) => place.name.toLowerCase().contains(query))
+          .toList();
+
+      // Hiç sonuç yoksa → NoPlacesFoundPage aç
+      if (results.isEmpty) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => NoPlacesFoundPage(query: value),
+          ),
+        );
+      }
+    }
+
+    setState(() {
+      _filteredPlaces = results;
+    });
   }
 
   @override
@@ -48,11 +91,13 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Search bar
+          // -------- SEARCH BAR --------
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: TextField(
+              controller: _searchController,
               style: AppTextStyles.body,
+              onChanged: _onSearchChanged,          // 🔴 ASIL ARAMA BURADA
               decoration: InputDecoration(
                 hintText: 'Search for the place in your mind',
                 prefixIcon: const Icon(Icons.search),
@@ -74,7 +119,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          // Sort bar
+          // -------- SORT BAR --------
           Padding(
             padding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
@@ -96,18 +141,21 @@ class _HomePageState extends State<HomePage> {
                   ],
                   onChanged: (value) {
                     if (value == null) return;
-                    setState(() => _selectedSort = value);
+                    setState(() {
+                      _selectedSort = value;
+                      // İstersen burada _filteredPlaces'i sıralarsın
+                    });
                   },
                 ),
               ],
             ),
           ),
 
-          // Results count
+          // -------- RESULTS COUNT --------
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              'Found ${_places.length} results',
+              'Found ${_filteredPlaces.length} results',
               style: const TextStyle(
                   fontSize: 13, color: Colors.grey),
             ),
@@ -115,17 +163,15 @@ class _HomePageState extends State<HomePage> {
 
           const SizedBox(height: 8),
 
-          // List of cards
+          // -------- LIST OF CARDS --------
           Expanded(
             child: ListView.builder(
               padding:
               const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              itemCount: _places.length,
+              itemCount: _filteredPlaces.length,
               itemBuilder: (context, index) {
-                final place = _places[index];
-                return PlaceCard(
-                  place: place,
-                );
+                final place = _filteredPlaces[index];
+                return PlaceCard(place: place);
               },
             ),
           ),
