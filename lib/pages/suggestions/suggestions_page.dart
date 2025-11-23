@@ -16,8 +16,11 @@ class _SuggestionsPageState extends State<SuggestionsPage> {
   ];
 
   void _onSuggestionTap(String suggestion) {
-    print('Selected suggestion: $suggestion');
-    Navigator.pushNamed(context, '/home');
+    Navigator.pushNamed(
+      context,
+      '/home',
+      arguments: suggestion,
+    );
   }
 
   @override

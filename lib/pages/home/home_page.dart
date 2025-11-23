@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:locai/widgets/place_card.dart';
 import 'package:locai/utils/text_styles.dart';
@@ -17,12 +19,13 @@ class _HomePageState extends State<HomePage> {
 
   String _selectedSort = 'Relevance';
   final TextEditingController _searchController = TextEditingController();
+  bool _hasAppliedInitialSuggestion = false;
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
 
-    // TODO: Replace this mock data with real search results
     _allPlaces = [
       const Place(
         name: 'Sushico',
@@ -49,9 +52,15 @@ class _HomePageState extends State<HomePage> {
     _filteredPlaces = List.from(_allPlaces);
   }
 
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _debounce?.cancel();
+    super.dispose();
+  }
+
   void _onSearchChanged(String value) {
     final query = value.toLowerCase();
-
     List<Place> results;
 
     if (query.isEmpty) {
@@ -76,20 +85,38 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _onSearchChangedDebounced(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 450), () {
+      _onSearchChanged(value);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container
-      (color: const Color(0xFFF7F7F7),
+    final suggestion = ModalRoute.of(context)?.settings.arguments as String?;
+
+    if (suggestion != null &&
+        suggestion.isNotEmpty &&
+        !_hasAppliedInitialSuggestion) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _searchController.text = suggestion;
+        _onSearchChanged(suggestion);
+        _hasAppliedInitialSuggestion = true;
+      });
+    }
+
+    return Container(
+      color: const Color(0xFFF7F7F7),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Search
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: TextField(
               controller: _searchController,
               style: AppTextStyles.body,
-              onChanged: _onSearchChanged,
+              onChanged: _onSearchChangedDebounced,
               decoration: InputDecoration(
                 hintText: 'Search for the place in your mind',
                 prefixIcon: const Icon(Icons.search),
@@ -108,8 +135,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-
-          // Sort row
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
             child: Row(
@@ -135,8 +160,6 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-
-          // Results count
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
@@ -144,18 +167,14 @@ class _HomePageState extends State<HomePage> {
               style: const TextStyle(fontSize: 13, color: Colors.grey),
             ),
           ),
-
           const SizedBox(height: 8),
-
-          // List of places
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               itemCount: _filteredPlaces.length,
               itemBuilder: (context, index) {
                 final place = _filteredPlaces[index];
-                final isFav =
-                FavoritesState.instance.isFavorite(place);
+                final isFav = FavoritesState.instance.isFavorite(place);
 
                 return PlaceCard(
                   place: place,
