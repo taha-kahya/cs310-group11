@@ -11,10 +11,9 @@ class _ProfilePageState extends State<ProfilePage> {
   String _username = "Username";
   bool _notificationsEnabled = true;
 
-
-
   void _showChangeUsernamePopup() {
-    final TextEditingController _usernameCtrl = TextEditingController(text: _username);
+    final TextEditingController _usernameCtrl =
+    TextEditingController(text: _username);
 
     showDialog(
       context: context,
@@ -34,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         actions: [
           TextButton(
-            onPressed:(){
+            onPressed: () {
               Navigator.pop(context);
             },
             child: const Text("Cancel"),
@@ -42,7 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
           TextButton(
             onPressed: () {
               final newName = _usernameCtrl.text.trim();
-              if (newName.isNotEmpty){
+              if (newName.isNotEmpty) {
                 setState(() => _username = newName);
                 Navigator.pop(context);
               }
@@ -56,9 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _showResetPasswordPopup() {
     final TextEditingController _passwordCtrl = TextEditingController();
-
     final TextEditingController _confirmCtrl = TextEditingController();
-
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
     showDialog(
@@ -70,7 +67,6 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-
               TextFormField(
                 controller: _passwordCtrl,
                 obscureText: true,
@@ -83,7 +79,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   }
                   return null;
                 },
-
                 decoration: InputDecoration(
                   hintText: "New password",
                   filled: true,
@@ -94,9 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
-
               TextFormField(
                 controller: _confirmCtrl,
                 obscureText: true,
@@ -167,7 +160,10 @@ class _ProfilePageState extends State<ProfilePage> {
               Navigator.pop(context);
               Navigator.pushReplacementNamed(context, "/sign-in");
             },
-            child: const Text("Log Out", style: TextStyle(color: Colors.red)),
+            child: const Text(
+              "Log Out",
+              style: TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),
@@ -175,70 +171,85 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   @override
-  Widget build(BuildContext context){
-    return Container(
-      color: Colors.white,
-      child: Column(
-        children: [
-          const SizedBox(height: 70),
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
 
-          const CircleAvatar(
-            radius: 60,
-            backgroundColor: Color(0xFF333333),
-            child: Icon(Icons.person, size: 70, color: Colors.white),
-          ),
+    return SafeArea(
+      child: Container(
+        color: Colors.white,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding:
+            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: size.height * 0.04),
 
-          const SizedBox(height: 20),
-          Text(
-            _username,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
+                const CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Color(0xFF333333),
+                  child: Icon(Icons.person, size: 56, color: Colors.white),
+                ),
+
+                const SizedBox(height: 16),
+
+                Text(
+                  _username,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+
+                const SizedBox(height: 32),
+
+                _ProfileToggleOption(
+                  title: "Notifications",
+                  value: _notificationsEnabled,
+                  onChanged: (val) {
+                    setState(() => _notificationsEnabled = val);
+                  },
+                ),
+                const Divider(height: 1),
+
+                _ProfileOption(
+                  title: "Reset password",
+                  onTap: _showResetPasswordPopup,
+                ),
+                const Divider(height: 1),
+
+                _ProfileOption(
+                  title: "Change username",
+                  onTap: _showChangeUsernamePopup,
+                ),
+                const Divider(height: 1),
+
+                _ProfileOption(
+                  title: "Give Feedback",
+                  onTap: () {
+                    Navigator.pushNamed(context, "/give-feedback");
+                  },
+                ),
+                const Divider(height: 1),
+
+                _ProfileOption(
+                  title: "Report Bug",
+                  onTap: () {
+                    Navigator.pushNamed(context, "/report-bug");
+                  },
+                ),
+                const Divider(height: 1),
+
+                _ProfileOption(
+                  title: "Log Out",
+                  colorRed: true,
+                  onTap: _logoutConfirmation,
+                ),
+              ],
             ),
           ),
-
-          const SizedBox(height: 40),
-
-          _ProfileToggleOption(
-            title: "Notifications",
-            value: _notificationsEnabled,
-            onChanged: (val) {
-              setState(() => _notificationsEnabled = val);
-            },
-          ),
-
-          _ProfileOption(
-            title: "Reset password",
-            onTap: _showResetPasswordPopup,
-          ),
-
-
-          _ProfileOption(
-            title: "Change username",
-            onTap: _showChangeUsernamePopup,
-          ),
-
-
-          _ProfileOption(
-            title: "Give Feedback",
-            onTap: (){
-              Navigator.pushNamed(context, "/give-feedback");
-            },
-          ),
-
-          _ProfileOption(
-            title: "Report Bug",
-            onTap: (){
-              Navigator.pushNamed(context, "/report-bug");
-            },
-          ),
-
-          _ProfileOption(
-            title: "Log Out",
-            colorRed: true,
-            onTap: _logoutConfirmation,
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -258,26 +269,25 @@ class _ProfileOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
-        width: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               title,
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 16,
                 color: colorRed ? Colors.red : Colors.black,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            Icon(
+            const Icon(
               Icons.chevron_right,
               color: Colors.black45,
-              size: 25,
+              size: 20,
             ),
           ],
         ),
@@ -285,7 +295,6 @@ class _ProfileOption extends StatelessWidget {
     );
   }
 }
-
 
 class _ProfileToggleOption extends StatelessWidget {
   final String title;
@@ -301,15 +310,17 @@ class _ProfileToggleOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
-      width: double.infinity,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             title,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           Switch(
             value: value,
