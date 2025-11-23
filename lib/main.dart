@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       ),
 
       // Default page
-      initialRoute: '/recent-searches',
+      initialRoute: '/sign-in',
 
       routes: {
         '/home': (context) => const MainShell(initialIndex: 0),
