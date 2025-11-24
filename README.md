@@ -13,6 +13,7 @@ Firebase is used to store user favorites, search history, and preferences, makin
 - **Tuna Kubat** – 31198  
 
 ## App Structure
+```
 /assets
   /fonts
   /images
@@ -30,6 +31,7 @@ Firebase is used to store user favorites, search history, and preferences, makin
   /widgets
      custom_app_bar.dart
      place_card.dart
+```
 
 - **assets:** Includes the local images and custom fonts.
 
