@@ -19,15 +19,17 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Change Username"),
-        content: TextField(
-          controller: _usernameCtrl,
-          decoration: InputDecoration(
-            hintText: "Enter new username",
-            filled: true,
-            fillColor: Colors.grey.shade200,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+        content: SingleChildScrollView( // ★ FIX
+          child: TextField(
+            controller: _usernameCtrl,
+            decoration: InputDecoration(
+              hintText: "Enter new username",
+              filled: true,
+              fillColor: Colors.grey.shade200,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
             ),
           ),
         ),
@@ -62,54 +64,57 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Reset Password"),
-        content: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: _passwordCtrl,
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Password required";
-                  }
-                  if (value.length < 6) {
-                    return "Min 6 characters";
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                  hintText: "New password",
-                  filled: true,
-                  fillColor: Colors.grey.shade200,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
+
+        content: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: _passwordCtrl,
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Password required";
+                    }
+                    if (value.length < 6) {
+                      return "Min 6 characters";
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    hintText: "New password",
+                    filled: true,
+                    fillColor: Colors.grey.shade200,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _confirmCtrl,
-                obscureText: true,
-                validator: (value) {
-                  if (value != _passwordCtrl.text) {
-                    return "Passwords don't match";
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                  hintText: "Confirm password",
-                  filled: true,
-                  fillColor: Colors.grey.shade200,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _confirmCtrl,
+                  obscureText: true,
+                  validator: (value) {
+                    if (value != _passwordCtrl.text) {
+                      return "Passwords don't match";
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    hintText: "Confirm password",
+                    filled: true,
+                    fillColor: Colors.grey.shade200,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         actions: [
