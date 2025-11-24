@@ -12,4 +12,33 @@ Firebase is used to store user favorites, search history, and preferences, makin
 - **Can Demirtaş** – 32091  
 - **Tuna Kubat** – 31198  
 
+## App Structure
+/assets
+  /fonts
+  /images
+/lib
+  /pages
+     /home
+       home_page.dart
+     ...
+  /state
+     favorites_state.dart
+  /utils
+     colors.dart
+     paddings.dart
+     text_styles.dart
+  /widgets
+     custom_app_bar.dart
+     place_card.dart
+
+- **assets:** Includes the local images and custom fonts.
+
+- **lib/pages:** Stores the files for all pages.
+
+- **lib/state:** Manages the states that are accessed and updated by multiple pages.
+
+- **lib/utils:** Includes utility classes that organize static data into separate files.
+
+- **lib/widgets:** Stores the custom widgets. For an example, the place_card.dart file provides a way to reuse our custom card widget in multiple pages easily. 
+
 This readme file will be updated as the project progresses.
