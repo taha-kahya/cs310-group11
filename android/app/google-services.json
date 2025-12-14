@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "693811444808",
+    "project_id": "locai-d185b",
+    "storage_bucket": "locai-d185b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:693811444808:android:021680f343b26cd8f96c7d",
+        "android_client_info": {
+          "package_name": "com.example.locai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7XU3KRxvbMDG6kfmxFGPnPQn1Cx3QNuE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
