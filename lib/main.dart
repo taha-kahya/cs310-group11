@@ -8,10 +8,17 @@ import 'package:locai/pages/recentSearches/recent_searches_page.dart';
 import 'package:locai/pages/giveFeedback/give_feedback_page.dart';
 import 'package:locai/pages/reportBug/report_bug_page.dart';
 import 'package:locai/pages/forgot_password/forgot_password_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
