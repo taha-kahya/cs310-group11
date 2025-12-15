@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:locai/services/auth_service.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -11,6 +12,8 @@ class _ProfilePageState extends State<ProfilePage> {
   String _username = "Username";
   bool _notificationsEnabled = true;
 
+  final AuthService _authService = AuthService();
+
   void _showChangeUsernamePopup() {
     final TextEditingController _usernameCtrl =
     TextEditingController(text: _username);
@@ -19,7 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Change Username"),
-        content: SingleChildScrollView( // ★ FIX
+        content: SingleChildScrollView(
           child: TextField(
             controller: _usernameCtrl,
             decoration: InputDecoration(
@@ -35,9 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: () => Navigator.pop(context),
             child: const Text("Cancel"),
           ),
           TextButton(
@@ -64,7 +65,6 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Reset Password"),
-
         content: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -126,7 +126,6 @@ class _ProfilePageState extends State<ProfilePage> {
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 Navigator.pop(context);
-
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
@@ -149,6 +148,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // 🔐 FIREBASE LOGOUT (CORRECT)
   void _logoutConfirmation() {
     showDialog(
       context: context,
@@ -161,9 +161,19 @@ class _ProfilePageState extends State<ProfilePage> {
             child: const Text("Cancel"),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              Navigator.pushReplacementNamed(context, "/sign-in");
+              try {
+                await _authService.signOut();
+                // ❗ DO NOT navigate
+                // AuthGate will redirect automatically
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Logout failed. Please try again."),
+                  ),
+                );
+              }
             },
             child: const Text(
               "Log Out",
@@ -227,22 +237,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 _ProfileOption(
                   title: "Change username",
                   onTap: _showChangeUsernamePopup,
-                ),
-                const Divider(height: 1),
-
-                _ProfileOption(
-                  title: "Give Feedback",
-                  onTap: () {
-                    Navigator.pushNamed(context, "/give-feedback");
-                  },
-                ),
-                const Divider(height: 1),
-
-                _ProfileOption(
-                  title: "Report Bug",
-                  onTap: () {
-                    Navigator.pushNamed(context, "/report-bug");
-                  },
                 ),
                 const Divider(height: 1),
 

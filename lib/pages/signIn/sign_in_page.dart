@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:locai/services/auth_service.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -8,10 +9,13 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  final TextEditingController _usernameCtrl = TextEditingController();
+  final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _passwordCtrl = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+  final AuthService _authService = AuthService();
+
+  bool _isLoading = false;
 
   void _showInvalidDialog() {
     showDialog(
@@ -27,6 +31,33 @@ class _SignInPageState extends State<SignInPage> {
         ],
       ),
     );
+  }
+
+  Future<void> _handleLogin() async {
+    if (!_formKey.currentState!.validate()) {
+      _showInvalidDialog();
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      await _authService.signIn(
+        email: _emailCtrl.text.trim(),
+        password: _passwordCtrl.text.trim(),
+      );
+      // AuthGate will redirect automatically
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.toString().replaceFirst('Exception: ', ''),
+          ),
+        ),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -86,7 +117,7 @@ class _SignInPageState extends State<SignInPage> {
                 const Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    "USERNAME",
+                    "EMAIL",
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -96,15 +127,19 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 const SizedBox(height: 8),
                 TextFormField(
-                  controller: _usernameCtrl,
+                  controller: _emailCtrl,
+                  keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Username is required";
+                      return "Email is required";
+                    }
+                    if (!value.contains('@')) {
+                      return "Enter a valid email";
                     }
                     return null;
                   },
                   decoration: InputDecoration(
-                    hintText: "username",
+                    hintText: "email@example.com",
                     hintStyle: const TextStyle(
                       color: Colors.grey,
                       fontSize: 16,
@@ -172,13 +207,7 @@ class _SignInPageState extends State<SignInPage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        Navigator.pushReplacementNamed(context, '/home');
-                      } else {
-                        _showInvalidDialog();
-                      }
-                    },
+                    onPressed: _isLoading ? null : _handleLogin,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -187,7 +216,9 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
+                    child: _isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
                       "Log in",
                       style: TextStyle(
                         fontSize: 17,
@@ -200,9 +231,9 @@ class _SignInPageState extends State<SignInPage> {
 
                 const SizedBox(height: 28),
 
-                // ------- UPDATED: now clickable but same look -------
                 GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, "/forgot-password"),
+                  onTap: () =>
+                      Navigator.pushNamed(context, "/forgot-password"),
                   child: const Text(
                     "Forgot your password?",
                     style: TextStyle(fontSize: 15, color: Colors.black54),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:locai/services/auth_service.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -13,6 +14,9 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _passwordCtrl = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+  final AuthService _authService = AuthService();
+
+  bool _isLoading = false;
 
   void _showInvalidDialog() {
     showDialog(
@@ -32,6 +36,33 @@ class _SignUpPageState extends State<SignUpPage> {
 
   bool _isValidEmail(String email) {
     return email.contains("@") && email.contains(".");
+  }
+
+  Future<void> _handleSignUp() async {
+    if (!_formKey.currentState!.validate()) {
+      _showInvalidDialog();
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      await _authService.signUp(
+        email: _emailCtrl.text.trim(),
+        password: _passwordCtrl.text.trim(),
+      );
+      // AuthGate will redirect automatically
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.toString().replaceFirst('Exception: ', ''),
+          ),
+        ),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -128,6 +159,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
                 TextFormField(
                   controller: _emailCtrl,
+                  keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Email is required";
@@ -137,9 +169,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     }
                     return null;
                   },
-                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                    hintText: "username@email.com",
+                    hintText: "email@example.com",
                     filled: true,
                     fillColor: Colors.grey.shade300,
                     border: OutlineInputBorder(
@@ -197,13 +228,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        Navigator.pushReplacementNamed(context, '/home');
-                      } else {
-                        _showInvalidDialog();
-                      }
-                    },
+                    onPressed: _isLoading ? null : _handleSignUp,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -212,7 +237,9 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
+                    child: _isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
                       "Sign up",
                       style: TextStyle(
                         fontSize: 17,
@@ -231,7 +258,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: const Text.rich(
                       TextSpan(
                         text: "Already registered? ",
-                        style: TextStyle(fontSize: 15, color: Colors.black54),
+                        style:
+                        TextStyle(fontSize: 15, color: Colors.black54),
                         children: [
                           TextSpan(
                             text: "Log in.",
