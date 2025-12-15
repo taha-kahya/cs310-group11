@@ -39,8 +39,9 @@ class _MainShellState extends State<MainShell> {
   void _onTabSelected(int i) {
     if (i == _index) return;
 
-    const routes = ['/home', '/favorites', '/suggestions', '/profile'];
-    Navigator.pushReplacementNamed(context, routes[i]);
+    setState(() {
+      _index = i;
+    });
   }
 
   @override
@@ -48,6 +49,7 @@ class _MainShellState extends State<MainShell> {
     return Scaffold(
       appBar: CustomAppBar(title: _titles[_index]),
       body: _pages[_index],
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _index,
         type: BottomNavigationBarType.fixed,
@@ -62,6 +64,8 @@ class _MainShellState extends State<MainShell> {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
+
+      // Drawer routes are OK (they are NOT MainShell)
       endDrawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -88,7 +92,8 @@ class _MainShellState extends State<MainShell> {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const RecentSearchesPage()),
+                  MaterialPageRoute(
+                      builder: (_) => const RecentSearchesPage()),
                 );
               },
             ),
@@ -98,7 +103,8 @@ class _MainShellState extends State<MainShell> {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const GiveFeedbackPage()),
+                  MaterialPageRoute(
+                      builder: (_) => const GiveFeedbackPage()),
                 );
               },
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:locai/services/auth_service.dart';
+import 'package:provider/provider.dart';
+import 'package:locai/providers/auth_provider.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -13,9 +14,6 @@ class _SignInPageState extends State<SignInPage> {
   final TextEditingController _passwordCtrl = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-  final AuthService _authService = AuthService();
-
-  bool _isLoading = false;
 
   void _showInvalidDialog() {
     showDialog(
@@ -39,14 +37,13 @@ class _SignInPageState extends State<SignInPage> {
       return;
     }
 
-    setState(() => _isLoading = true);
-
     try {
-      await _authService.signIn(
-        email: _emailCtrl.text.trim(),
-        password: _passwordCtrl.text.trim(),
+      await context.read<AuthProvider>().login(
+        _emailCtrl.text.trim(),
+        _passwordCtrl.text.trim(),
       );
-      // AuthGate will redirect automatically
+      // ❗ DO NOT navigate
+      // AuthGate will handle redirection
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -55,13 +52,13 @@ class _SignInPageState extends State<SignInPage> {
           ),
         ),
       );
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -140,10 +137,6 @@ class _SignInPageState extends State<SignInPage> {
                   },
                   decoration: InputDecoration(
                     hintText: "email@example.com",
-                    hintStyle: const TextStyle(
-                      color: Colors.grey,
-                      fontSize: 16,
-                    ),
                     filled: true,
                     fillColor: Colors.grey.shade300,
                     border: OutlineInputBorder(
@@ -185,10 +178,6 @@ class _SignInPageState extends State<SignInPage> {
                   },
                   decoration: InputDecoration(
                     hintText: "******",
-                    hintStyle: const TextStyle(
-                      color: Colors.grey,
-                      fontSize: 16,
-                    ),
                     filled: true,
                     fillColor: Colors.grey.shade300,
                     border: OutlineInputBorder(
@@ -207,7 +196,7 @@ class _SignInPageState extends State<SignInPage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _handleLogin,
+                    onPressed: auth.isLoading ? null : _handleLogin,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -216,7 +205,7 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                       elevation: 0,
                     ),
-                    child: _isLoading
+                    child: auth.isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
                         : const Text(
                       "Log in",

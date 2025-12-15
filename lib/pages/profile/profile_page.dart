@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:locai/services/auth_service.dart';
+import 'package:provider/provider.dart';
+import 'package:locai/providers/auth_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -11,8 +12,6 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   String _username = "Username";
   bool _notificationsEnabled = true;
-
-  final AuthService _authService = AuthService();
 
   void _showChangeUsernamePopup() {
     final TextEditingController _usernameCtrl =
@@ -148,7 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // 🔐 FIREBASE LOGOUT (CORRECT)
+  // 🔐 LOGOUT via AuthProvider
   void _logoutConfirmation() {
     showDialog(
       context: context,
@@ -164,9 +163,9 @@ class _ProfilePageState extends State<ProfilePage> {
             onPressed: () async {
               Navigator.pop(context);
               try {
-                await _authService.signOut();
+                await context.read<AuthProvider>().logout();
                 // ❗ DO NOT navigate
-                // AuthGate will redirect automatically
+                // AuthGate will automatically redirect
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(

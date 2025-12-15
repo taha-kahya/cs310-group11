@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:locai/services/auth_service.dart';
+import 'package:provider/provider.dart';
+import 'package:locai/providers/auth_provider.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -14,9 +15,6 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _passwordCtrl = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-  final AuthService _authService = AuthService();
-
-  bool _isLoading = false;
 
   void _showInvalidDialog() {
     showDialog(
@@ -44,12 +42,10 @@ class _SignUpPageState extends State<SignUpPage> {
       return;
     }
 
-    setState(() => _isLoading = true);
-
     try {
-      await _authService.signUp(
-        email: _emailCtrl.text.trim(),
-        password: _passwordCtrl.text.trim(),
+      await context.read<AuthProvider>().signup(
+        _emailCtrl.text.trim(),
+        _passwordCtrl.text.trim(),
       );
       // AuthGate will redirect automatically
     } catch (e) {
@@ -60,13 +56,13 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
       );
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -228,7 +224,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _handleSignUp,
+                    onPressed: auth.isLoading ? null : _handleSignUp,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -237,7 +233,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       elevation: 0,
                     ),
-                    child: _isLoading
+                    child: auth.isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
                         : const Text(
                       "Sign up",
