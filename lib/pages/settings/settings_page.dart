@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:locai/providers/settings_provider.dart';
 
-class SettingsPage extends StatefulWidget {
+class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
-  @override
-  State<SettingsPage> createState() => _SettingsPageState();
-}
-
-class _SettingsPageState extends State<SettingsPage> {
-  bool _darkMode = false;
-  bool _onlyOpenPlaces = false;
-
-  void _showPopup(String title) {
+  void _showPopup(BuildContext context, String title) {
     showDialog(
       context: context,
       builder: (context) {
@@ -30,6 +24,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -47,32 +43,33 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
         ),
       ),
-
       body: ListView(
         children: [
           const Divider(height: 1),
+
 
           SwitchListTile(
             title: const Text(
               "Dark Mode",
               style: TextStyle(fontSize: 16),
             ),
-            value: _darkMode,
+            value: settings.isDarkMode,
             activeColor: Colors.black,
-            onChanged: (val) {
-              setState(() => _darkMode = val);
+            onChanged: (_) {
+              context.read<SettingsProvider>().toggleTheme();
             },
           ),
+
 
           SwitchListTile(
             title: const Text(
               "Only show open places",
               style: TextStyle(fontSize: 16),
             ),
-            value: _onlyOpenPlaces,
+            value: settings.onlyOpenPlaces,
             activeColor: Colors.black,
-            onChanged: (val) {
-              setState(() => _onlyOpenPlaces = val);
+            onChanged: (_) {
+              context.read<SettingsProvider>().toggleOnlyOpenPlaces();
             },
           ),
 
@@ -81,31 +78,27 @@ class _SettingsPageState extends State<SettingsPage> {
           ListTile(
             title: const Text("About"),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showPopup("About"),
+            onTap: () => _showPopup(context, "About"),
           ),
-
           ListTile(
             title: const Text("Terms & Conditions"),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showPopup("Terms & Conditions"),
+            onTap: () => _showPopup(context, "Terms & Conditions"),
           ),
-
           ListTile(
             title: const Text("Privacy Policy"),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showPopup("Privacy Policy"),
+            onTap: () => _showPopup(context, "Privacy Policy"),
           ),
-
           ListTile(
             title: const Text("Rate This App"),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showPopup("Rate This App"),
+            onTap: () => _showPopup(context, "Rate This App"),
           ),
-
           ListTile(
             title: const Text("Share This App"),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showPopup("Share This App"),
+            onTap: () => _showPopup(context, "Share This App"),
           ),
         ],
       ),
