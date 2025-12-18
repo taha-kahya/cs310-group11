@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:locai/utils/colors.dart';
 import 'package:locai/utils/text_styles.dart';
+import 'package:locai/models/user_feedback.dart';
+import 'package:locai/repositories/feedback_repository.dart';
 
 class GiveFeedbackPage extends StatefulWidget {
   const GiveFeedbackPage({super.key});
@@ -12,20 +16,60 @@ class GiveFeedbackPage extends StatefulWidget {
 class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
   final TextEditingController _feedbackCtrl = TextEditingController();
   int _rating = 0;
+  bool _isSubmitting = false;
+
+  Future<bool> _submitFeedback() async {
+    if (_feedbackCtrl.text.trim().isEmpty || _rating == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter feedback and rating')),
+      );
+      return false;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      final uid = FirebaseAuth.instance.currentUser!.uid;
+
+      final feedback = UserFeedback(
+        id: '',
+        message: _feedbackCtrl.text.trim(),
+        rating: _rating,
+        createdBy: uid,
+        createdAt: DateTime.now(),
+      );
+
+      await FeedbackRepository().submitFeedback(feedback);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Thank you for your feedback!')),
+      );
+
+      return true;
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to submit feedback')),
+      );
+      return false;
+    } finally {
+      setState(() {
+        _isSubmitting = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: AppColors.primary),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           "Give Feedback",
@@ -34,7 +78,6 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
           ),
         ),
       ),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Column(
@@ -61,6 +104,7 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
               padding: const EdgeInsets.all(16),
               child: TextField(
                 controller: _feedbackCtrl,
+                maxLines: null,
                 style: AppTextStyles.body.copyWith(
                   color: AppColors.primary,
                 ),
@@ -114,10 +158,17 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
 
             const SizedBox(height: 40),
 
-            Container(
+            SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: _isSubmitting
+                    ? null
+                    : () async {
+                  final success = await _submitFeedback();
+                  if (success) {
+                    Navigator.pop(context);
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -125,7 +176,9 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                child: Text(
+                child: _isSubmitting
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : Text(
                   "Submit",
                   style: AppTextStyles.subheading.copyWith(
                     color: AppColors.surface,
