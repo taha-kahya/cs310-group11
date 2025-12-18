@@ -16,12 +16,13 @@ class _SignUpPageState extends State<SignUpPage> {
 
   final _formKey = GlobalKey<FormState>();
 
-  void _showInvalidDialog() {
+  // 🔔 Generic popup dialog
+  void _showErrorDialog(String message) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Invalid Input"),
-        content: const Text("Please fix the errors in the form."),
+      builder: (_) => AlertDialog(
+        title: const Text("Error"),
+        content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -30,6 +31,10 @@ class _SignUpPageState extends State<SignUpPage> {
         ],
       ),
     );
+  }
+
+  void _showInvalidDialog() {
+    _showErrorDialog("Please fix the errors in the form.");
   }
 
   bool _isValidEmail(String email) {
@@ -47,14 +52,11 @@ class _SignUpPageState extends State<SignUpPage> {
         _emailCtrl.text.trim(),
         _passwordCtrl.text.trim(),
       );
+      // ✅ DO NOT navigate
       // AuthGate will redirect automatically
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            e.toString().replaceFirst('Exception: ', ''),
-          ),
-        ),
+      _showErrorDialog(
+        e.toString().replaceFirst('Exception: ', ''),
       );
     }
   }

@@ -15,12 +15,12 @@ class _SignInPageState extends State<SignInPage> {
 
   final _formKey = GlobalKey<FormState>();
 
-  void _showInvalidDialog() {
+  void _showErrorDialog(String message) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Invalid Input"),
-        content: const Text("Please fix the errors in the form."),
+      builder: (_) => AlertDialog(
+        title: const Text("Error"),
+        content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -29,6 +29,10 @@ class _SignInPageState extends State<SignInPage> {
         ],
       ),
     );
+  }
+
+  void _showInvalidDialog() {
+    _showErrorDialog("Please fix the errors in the form.");
   }
 
   Future<void> _handleLogin() async {
@@ -42,15 +46,10 @@ class _SignInPageState extends State<SignInPage> {
         _emailCtrl.text.trim(),
         _passwordCtrl.text.trim(),
       );
-      // ❗ DO NOT navigate
       // AuthGate will handle redirection
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            e.toString().replaceFirst('Exception: ', ''),
-          ),
-        ),
+      _showErrorDialog(
+        e.toString().replaceFirst('Exception: ', ''),
       );
     }
   }
@@ -81,7 +80,6 @@ class _SignInPageState extends State<SignInPage> {
                       style: TextStyle(
                         fontSize: 36,
                         fontWeight: FontWeight.w700,
-                        color: Colors.black,
                       ),
                     ),
                   ],
@@ -91,21 +89,17 @@ class _SignInPageState extends State<SignInPage> {
 
                 const Text(
                   "Welcome!",
-                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.w800,
-                    color: Colors.black,
                   ),
                 ),
                 const SizedBox(height: 10),
                 const Text(
                   "Sign in to continue.",
-                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.black54,
-                    fontWeight: FontWeight.w400,
                   ),
                 ),
 
@@ -237,7 +231,6 @@ class _SignInPageState extends State<SignInPage> {
                     "Sign Up",
                     style: TextStyle(
                       fontSize: 15,
-                      color: Colors.black,
                       fontWeight: FontWeight.w600,
                       decoration: TextDecoration.underline,
                     ),

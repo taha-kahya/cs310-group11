@@ -13,6 +13,22 @@ class _ProfilePageState extends State<ProfilePage> {
   String _username = "Username";
   bool _notificationsEnabled = true;
 
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Error"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showChangeUsernamePopup() {
     final TextEditingController _usernameCtrl =
     TextEditingController(text: _username);
@@ -127,7 +143,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Navigator.pop(context);
                 showDialog(
                   context: context,
-                  builder: (context) => AlertDialog(
+                  builder: (_) => AlertDialog(
                     title: const Text("Success"),
                     content: const Text("Password has been reset."),
                     actions: [
@@ -147,7 +163,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // 🔐 LOGOUT via AuthProvider
   void _logoutConfirmation() {
     showDialog(
       context: context,
@@ -164,14 +179,9 @@ class _ProfilePageState extends State<ProfilePage> {
               Navigator.pop(context);
               try {
                 await context.read<AuthProvider>().logout();
-                // ❗ DO NOT navigate
-                // AuthGate will automatically redirect
+                // AuthGate will redirect automatically
               } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Logout failed. Please try again."),
-                  ),
-                );
+                _showErrorDialog("Logout failed. Please try again.");
               }
             },
             child: const Text(
