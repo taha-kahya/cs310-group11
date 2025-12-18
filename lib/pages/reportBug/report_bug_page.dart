@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:locai/utils/colors.dart';
 import 'package:locai/utils/text_styles.dart';
+import 'package:locai/models/bug_report.dart';
+import 'package:locai/repositories/bug_reports_repository.dart';
 
 class ReportBugPage extends StatefulWidget {
   const ReportBugPage({super.key});
@@ -12,20 +16,59 @@ class ReportBugPage extends StatefulWidget {
 class _ReportBugPageState extends State<ReportBugPage> {
   final TextEditingController _bugCtrl = TextEditingController();
   String _priority = "High";
+  bool _isSubmitting = false;
+
+  Future<void> _submitBug() async {
+    if (_bugCtrl.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a bug description')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      final uid = FirebaseAuth.instance.currentUser!.uid;
+
+      final bug = BugReport(
+        id: '',
+        description: _bugCtrl.text.trim(),
+        priority: _priority,
+        createdBy: uid,
+        createdAt: DateTime.now(),
+      );
+
+      await BugReportsRepository().submitBugReport(bug);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Bug report submitted successfully')),
+      );
+
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to submit bug report')),
+      );
+    } finally {
+      setState(() {
+        _isSubmitting = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: AppColors.primary),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
         title: Text(
@@ -35,7 +78,6 @@ class _ReportBugPageState extends State<ReportBugPage> {
           ),
         ),
       ),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 22),
         child: Column(
@@ -62,6 +104,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
               padding: const EdgeInsets.all(16),
               child: TextField(
                 controller: _bugCtrl,
+                maxLines: null,
                 style: AppTextStyles.body.copyWith(
                   color: AppColors.primary,
                 ),
@@ -100,16 +143,11 @@ class _ReportBugPageState extends State<ReportBugPage> {
                   style: AppTextStyles.subheading.copyWith(
                     color: AppColors.primary,
                   ),
-                  items: [
-                    "Low",
-                    "Medium",
-                    "High",
-                  ].map((level) {
-                    return DropdownMenuItem(
-                      value: level,
-                      child: Text(level),
-                    );
-                  }).toList(),
+                  items: const [
+                    DropdownMenuItem(value: "Low", child: Text("Low")),
+                    DropdownMenuItem(value: "Medium", child: Text("Medium")),
+                    DropdownMenuItem(value: "High", child: Text("High")),
+                  ],
                   onChanged: (value) {
                     setState(() {
                       _priority = value!;
@@ -121,10 +159,10 @@ class _ReportBugPageState extends State<ReportBugPage> {
 
             const SizedBox(height: 40),
 
-            Container(
+            SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: _isSubmitting ? null : _submitBug,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -132,7 +170,9 @@ class _ReportBugPageState extends State<ReportBugPage> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                child: Text(
+                child: _isSubmitting
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : Text(
                   "Submit",
                   style: AppTextStyles.subheading.copyWith(
                     color: AppColors.surface,
