@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:locai/providers/auth_provider.dart';
+import 'package:locai/repositories/user_profile_repository.dart';
+import 'package:locai/models/user_profile.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -16,7 +18,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
   final _formKey = GlobalKey<FormState>();
 
-  // 🔔 Generic popup dialog
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -52,8 +53,22 @@ class _SignUpPageState extends State<SignUpPage> {
         _emailCtrl.text.trim(),
         _passwordCtrl.text.trim(),
       );
-      // ✅ DO NOT navigate
-      // AuthGate will redirect automatically
+
+      final user = context.read<AuthProvider>().currentUser;
+
+      if (user != null) {
+        final profile = UserProfile(
+          uid: user.uid,
+          username: _nameCtrl.text,
+          createdAt: DateTime.now(),
+        );
+
+        await UserProfileRepository().createProfile(profile);
+      }
+
+      if (mounted) {
+        Navigator.pop(context);
+      }
     } catch (e) {
       _showErrorDialog(
         e.toString().replaceFirst('Exception: ', ''),

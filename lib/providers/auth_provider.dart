@@ -5,7 +5,7 @@ class AuthProvider extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   User? _currentUser;
-  bool _isLoading = false;
+  bool _isLoading = true;
 
   User? get currentUser => _currentUser;
   bool get isLoading => _isLoading;
@@ -15,6 +15,7 @@ class AuthProvider extends ChangeNotifier {
 
     _auth.authStateChanges().listen((user) {
       _currentUser = user;
+      _isLoading = false;
       notifyListeners();
     });
   }
@@ -40,6 +41,7 @@ class AuthProvider extends ChangeNotifier {
         email: email,
         password: password,
       );
+
     } on FirebaseAuthException catch (e) {
       _setLoading(false);
       throw _mapError(e);
