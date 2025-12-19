@@ -23,6 +23,7 @@ class UserProfile {
       uid: doc.id,
       username: data['username'],
       createdAt: (data['createdAt'] as Timestamp).toDate(),
+      /// createdBy is not added here since it is obvious
     );
   }
 }

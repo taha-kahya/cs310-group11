@@ -18,8 +18,10 @@ class RecentSearchesRepository {
         });
   }
 
-  Future<void> addSearch(SearchHistory search) {
-    return _firestore.collection(_collection).add(search.toMap());
+  Future<void> addSearch(SearchHistory search) async {
+    final docRef = _firestore.collection(_collection).doc();
+
+    await docRef.set(search.toMap());
   }
 
   Future<void> deleteSearch(String docId) {
