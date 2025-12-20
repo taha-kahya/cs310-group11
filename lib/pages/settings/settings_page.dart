@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:locai/providers/settings_provider.dart';
+import 'package:locai/state/preferences_state.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -25,6 +26,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
+    final prefs = context.watch<PreferencesState>();
 
     return Scaffold(
       appBar: AppBar(
@@ -53,10 +55,10 @@ class SettingsPage extends StatelessWidget {
               "Dark Mode",
               style: TextStyle(fontSize: 16),
             ),
-            value: settings.isDarkMode,
-            activeColor: Colors.black,
-            onChanged: (_) {
-              context.read<SettingsProvider>().toggleTheme();
+            value: prefs.darkMode,
+            activeTrackColor: Colors.black,
+            onChanged: (v) {
+              context.read<PreferencesState>().setDarkMode(v);
             },
           ),
 
@@ -67,7 +69,7 @@ class SettingsPage extends StatelessWidget {
               style: TextStyle(fontSize: 16),
             ),
             value: settings.onlyOpenPlaces,
-            activeColor: Colors.black,
+            activeTrackColor: Colors.black,
             onChanged: (_) {
               context.read<SettingsProvider>().toggleOnlyOpenPlaces();
             },

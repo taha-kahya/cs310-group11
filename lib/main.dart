@@ -19,6 +19,9 @@ import 'package:locai/pages/recentSearches/recent_searches_page.dart';
 import 'package:locai/pages/giveFeedback/give_feedback_page.dart';
 import 'package:locai/pages/reportBug/report_bug_page.dart';
 
+import 'package:locai/services/preferences_service.dart';
+import 'package:locai/state/preferences_state.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -28,6 +31,10 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        Provider(create: (_) => PreferencesService()),
+        ChangeNotifierProvider(
+          create: (ctx) => PreferencesState(ctx.read<PreferencesService>()),
+        ),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
         ChangeNotifierProvider(create: (_) => FavoritesProvider(FavoritesRepository())),
@@ -38,39 +45,77 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => context.read<PreferencesState>().init());
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'LocAI',
-      debugShowCheckedModeBanner: false,
+    return Consumer<PreferencesState>(
+      builder: (context, prefs, _) {
+        if (!prefs.initialized) {
+          return const MaterialApp(
+            home: Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            ),
+          );
+        }
 
-      theme: ThemeData(
-        fontFamily: 'Poppins',
-        textTheme: const TextTheme(
-          headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-          headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          headlineSmall: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          bodyLarge: TextStyle(fontSize: 16),
-          bodyMedium: TextStyle(fontSize: 14),
-          bodySmall: TextStyle(fontSize: 12),
-        ),
-      ),
+        return MaterialApp(
+          title: 'LocAI',
+          debugShowCheckedModeBanner: false,
 
-      home: const AuthGate(),
+          theme: ThemeData(
+            fontFamily: 'Poppins',
+            textTheme: const TextTheme(
+              headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              headlineSmall: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              bodyLarge: TextStyle(fontSize: 16),
+              bodyMedium: TextStyle(fontSize: 14),
+              bodySmall: TextStyle(fontSize: 12),
+            ),
+          ),
 
-      routes: {
-        '/sign-in': (context) => const SignInPage(),
-        '/sign-up': (context) => const SignUpPage(),
-        '/forgot-password': (context) => const ForgotPasswordPage(),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            fontFamily: 'Poppins',
+            textTheme: const TextTheme(
+              headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              headlineSmall: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              bodyLarge: TextStyle(fontSize: 16),
+              bodyMedium: TextStyle(fontSize: 14),
+              bodySmall: TextStyle(fontSize: 12),
+            ),
+          ),
 
-        '/place-details': (context) => const PlaceDetailsPage(),
-        '/settings': (context) => const SettingsPage(),
-        '/recent-searches': (context) => const RecentSearchesPage(),
-        '/give-feedback': (context) => const GiveFeedbackPage(),
-        '/report-bug': (context) => const ReportBugPage(),
+          themeMode: prefs.darkMode ? ThemeMode.dark : ThemeMode.light,
+
+          home: const AuthGate(),
+
+          routes: {
+            '/sign-in': (context) => const SignInPage(),
+            '/sign-up': (context) => const SignUpPage(),
+            '/forgot-password': (context) => const ForgotPasswordPage(),
+
+            '/place-details': (context) => const PlaceDetailsPage(),
+            '/settings': (context) => const SettingsPage(),
+            '/recent-searches': (context) => const RecentSearchesPage(),
+            '/give-feedback': (context) => const GiveFeedbackPage(),
+            '/report-bug': (context) => const ReportBugPage(),
+          },
+        );
       },
     );
   }
