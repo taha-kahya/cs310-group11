@@ -26,9 +26,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
       return;
     }
 
-    setState(() {
-      _isSubmitting = true;
-    });
+    setState(() => _isSubmitting = true);
 
     try {
       final uid = FirebaseAuth.instance.currentUser!.uid;
@@ -48,33 +46,36 @@ class _ReportBugPageState extends State<ReportBugPage> {
       );
 
       Navigator.pop(context);
-    } catch (e) {
+    } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to submit bug report')),
       );
     } finally {
-      setState(() {
-        _isSubmitting = false;
-      });
+      setState(() => _isSubmitting = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
+        centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.primary),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.primary,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
-        centerTitle: true,
         title: Text(
           "Report Bug",
           style: AppTextStyles.subheading.copyWith(
-            color: AppColors.primary,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
       ),
@@ -89,7 +90,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
               "Have you detected a bug? Let us know.",
               style: AppTextStyles.heading.copyWith(
                 fontSize: 36,
-                color: AppColors.primary,
+                color: onSurface,
               ),
             ),
 
@@ -98,7 +99,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
             Container(
               height: 300,
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(18),
               ),
               padding: const EdgeInsets.all(16),
@@ -106,13 +107,13 @@ class _ReportBugPageState extends State<ReportBugPage> {
                 controller: _bugCtrl,
                 maxLines: null,
                 style: AppTextStyles.body.copyWith(
-                  color: AppColors.primary,
+                  color: onSurface,
                 ),
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "Enter the bug description here.",
                   hintStyle: AppTextStyles.body.copyWith(
-                    color: AppColors.secondary,
+                    color: onSurface.withOpacity(0.6),
                   ),
                 ),
               ),
@@ -123,8 +124,8 @@ class _ReportBugPageState extends State<ReportBugPage> {
             Text(
               "Select priority level",
               style: AppTextStyles.body.copyWith(
-                color: AppColors.secondary,
                 fontWeight: FontWeight.w600,
+                color: onSurface.withOpacity(0.7),
               ),
             ),
 
@@ -133,7 +134,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: DropdownButtonHideUnderline(
@@ -141,7 +142,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                   value: _priority,
                   isExpanded: true,
                   style: AppTextStyles.subheading.copyWith(
-                    color: AppColors.primary,
+                    color: onSurface,
                   ),
                   items: const [
                     DropdownMenuItem(value: "Low", child: Text("Low")),
@@ -164,18 +165,20 @@ class _ReportBugPageState extends State<ReportBugPage> {
               child: ElevatedButton(
                 onPressed: _isSubmitting ? null : _submitBug,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
                 child: _isSubmitting
-                    ? CircularProgressIndicator(color: Theme.of(context).colorScheme.onPrimary)
+                    ? CircularProgressIndicator(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                )
                     : Text(
                   "Submit",
                   style: AppTextStyles.subheading.copyWith(
-                    color: AppColors.surface,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
                 ),
               ),

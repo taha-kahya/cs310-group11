@@ -62,19 +62,22 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
 
   @override
   Widget build(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
+        centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.primary),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           "Give Feedback",
           style: AppTextStyles.subheading.copyWith(
-            color: AppColors.primary,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
       ),
@@ -88,8 +91,8 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
             Text(
               "Tell us what you think about our app",
               style: AppTextStyles.heading.copyWith(
-                color: AppColors.primary,
                 fontSize: 36,
+                color: onSurface,
               ),
             ),
 
@@ -98,7 +101,7 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
             Container(
               height: 300,
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(18),
               ),
               padding: const EdgeInsets.all(16),
@@ -106,13 +109,13 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
                 controller: _feedbackCtrl,
                 maxLines: null,
                 style: AppTextStyles.body.copyWith(
-                  color: AppColors.primary,
+                  color: onSurface,
                 ),
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "Enter your feedback here.",
                   hintStyle: AppTextStyles.body.copyWith(
-                    color: AppColors.secondary,
+                    color: onSurface.withOpacity(0.6),
                   ),
                 ),
               ),
@@ -123,7 +126,7 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
             Text(
               "Rate our app",
               style: AppTextStyles.subheading.copyWith(
-                color: AppColors.secondary,
+                color: onSurface.withOpacity(0.7),
               ),
             ),
 
@@ -170,7 +173,7 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -181,7 +184,7 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
                     : Text(
                   "Submit",
                   style: AppTextStyles.subheading.copyWith(
-                    color: AppColors.surface,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
                 ),
               ),
