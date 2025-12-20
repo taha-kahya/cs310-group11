@@ -2,10 +2,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
+
 import 'package:locai/widgets/place_card.dart';
 import 'package:locai/utils/text_styles.dart';
 import 'package:locai/pages/noPlacesFound/no_places_found_page.dart';
+
 import 'package:locai/providers/favorites_provider.dart';
+import 'package:locai/providers/search_provider.dart';
+
 import 'package:locai/models/favorite_place.dart';
 import 'package:locai/models/search_history.dart';
 import 'package:locai/repositories/recent_searches_repository.dart';
@@ -23,7 +27,7 @@ class _HomePageState extends State<HomePage> {
 
   String _selectedSort = 'Relevance';
   final TextEditingController _searchController = TextEditingController();
-  bool _hasAppliedInitialSuggestion = false;
+
   Timer? _debounce;
   final RecentSearchesRepository _searchRepo = RecentSearchesRepository();
   String? _lastSavedQuery;
@@ -32,22 +36,22 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    _allPlaces = [
-      const Place(
+    _allPlaces = const [
+      Place(
         name: 'Sushico',
         rating: 4.9,
         description:
         'Fresh Asian fusion with sushi, noodles, and bold flavors served in a modern, cozy setting.',
         imageUrl: "assets/images/temp_image_1.jpg",
       ),
-      const Place(
+      Place(
         name: 'RamenToGo',
         rating: 4.9,
         description:
         'Quick, fresh, and flavorful ramen made for comfort on the go.',
         imageUrl: "assets/images/temp_image_2.jpg",
       ),
-      const Place(
+      Place(
         name: 'Japanese Fried Chicken',
         rating: 4.6,
         description:
@@ -73,6 +77,8 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+  // ---------------- SEARCH LOGIC ----------------
+
   void _onSearchChanged(String value) async {
     final query = value.toLowerCase();
     List<Place> results;
@@ -84,22 +90,23 @@ class _HomePageState extends State<HomePage> {
           .where((place) => place.name.toLowerCase().contains(query))
           .toList();
 
-      // Save to recent searches (only if query changed and not empty)
-      final trimmedQuery = value.trim();
-      if (trimmedQuery.isNotEmpty && trimmedQuery != _lastSavedQuery) {
-        _lastSavedQuery = trimmedQuery;
+      // Save to recent searches (avoid duplicates)
+      final trimmed = value.trim();
+      if (trimmed.isNotEmpty && trimmed != _lastSavedQuery) {
+        _lastSavedQuery = trimmed;
         final user = FirebaseAuth.instance.currentUser;
         if (user != null) {
           try {
-            final search = SearchHistory(
-              id: '',
-              query: trimmedQuery,
-              createdBy: user.uid,
-              createdAt: DateTime.now(),
+            await _searchRepo.addSearch(
+              SearchHistory(
+                id: '',
+                query: trimmed,
+                createdBy: user.uid,
+                createdAt: DateTime.now(),
+              ),
             );
-            await _searchRepo.addSearch(search);
-          } catch (e) {
-            // Silently fail - don't interrupt search flow
+          } catch (_) {
+            // ignore
           }
         }
       }
@@ -126,19 +133,21 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // ---------------- UI ----------------
+
   @override
   Widget build(BuildContext context) {
-    final suggestion = ModalRoute.of(context)?.settings.arguments as String?;
     final favProvider = context.watch<FavoritesProvider>();
     final uid = FirebaseAuth.instance.currentUser!.uid;
 
-    if (suggestion != null &&
-        suggestion.isNotEmpty &&
-        !_hasAppliedInitialSuggestion) {
+    final searchProvider = context.watch<SearchProvider>();
+    final providerQuery = searchProvider.query;
+
+    if (providerQuery != null && providerQuery.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _searchController.text = suggestion;
-        _onSearchChanged(suggestion);
-        _hasAppliedInitialSuggestion = true;
+        _searchController.text = providerQuery;
+        _onSearchChanged(providerQuery);
+        searchProvider.clear(); // consume once
       });
     }
 
@@ -162,15 +171,18 @@ class _HomePageState extends State<HomePage> {
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                  borderSide:
+                  const BorderSide(color: Color(0xFFE0E0E0)),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                  borderSide:
+                  const BorderSide(color: Color(0xFFE0E0E0)),
                 ),
               ),
             ),
           ),
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
             child: Row(
@@ -189,14 +201,13 @@ class _HomePageState extends State<HomePage> {
                   ],
                   onChanged: (value) {
                     if (value == null) return;
-                    setState(() {
-                      _selectedSort = value;
-                    });
+                    setState(() => _selectedSort = value);
                   },
                 ),
               ],
             ),
           ),
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
@@ -204,7 +215,9 @@ class _HomePageState extends State<HomePage> {
               style: const TextStyle(fontSize: 13, color: Colors.grey),
             ),
           ),
+
           const SizedBox(height: 8),
+
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -212,8 +225,6 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, index) {
                 final place = _filteredPlaces[index];
                 final placeId = place.name;
-
-                // Watch the favorite status from provider
                 final isFav = favProvider.isFavorite(placeId);
 
                 return PlaceCard(
@@ -222,27 +233,23 @@ class _HomePageState extends State<HomePage> {
                   isInitiallyFavorite: isFav,
                   onFavoriteChanged: (isFavorite) async {
                     if (isFavorite) {
-                      // Adding to favorites
-                      final fav = FavoritePlace(
-                        id: '',
-                        placeId: placeId,
-                        name: place.name,
-                        rating: place.rating,
-                        address: '',
-                        imageUrl: place.imageUrl,
-                        preview: place.description,
-                        createdBy: uid,
-                        createdAt: DateTime.now(),
-                      );
-
                       await favProvider.toggleFavorite(
                         uid: uid,
                         placeId: placeId,
-                        fav: fav,
+                        fav: FavoritePlace(
+                          id: '',
+                          placeId: placeId,
+                          name: place.name,
+                          rating: place.rating,
+                          address: '',
+                          imageUrl: place.imageUrl,
+                          preview: place.description,
+                          createdBy: uid,
+                          createdAt: DateTime.now(),
+                        ),
                         makeFavorite: true,
                       );
                     } else {
-                      // Removing from favorites
                       await favProvider.toggleFavorite(
                         uid: uid,
                         placeId: placeId,

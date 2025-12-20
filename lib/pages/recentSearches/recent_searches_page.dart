@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 
 import 'package:locai/widgets/custom_app_bar.dart';
 import 'package:locai/models/search_history.dart';
 import 'package:locai/repositories/recent_searches_repository.dart';
+import 'package:locai/providers/search_provider.dart';
 
 class RecentSearchesPage extends StatefulWidget {
   const RecentSearchesPage({super.key});
@@ -59,15 +61,16 @@ class _RecentSearchesPageState extends State<RecentSearchesPage> {
                 return ListTile(
                   leading: const Icon(Icons.search),
                   title: Text(search.query),
-                  subtitle: Text(
-                    _formatDate(search.createdAt),
-                  ),
+                  subtitle: Text(_formatDate(search.createdAt)),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete_outline),
                     onPressed: () {
                       _repo.deleteSearch(search.id);
                     },
                   ),
+                  onTap: () {
+                    context.read<SearchProvider>().setQuery(search.query);
+                  },
                 );
               },
             );

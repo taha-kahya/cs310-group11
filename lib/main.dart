@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
 import 'package:locai/providers/auth_provider.dart';
+import 'package:locai/providers/search_provider.dart';
 import 'package:locai/auth/auth_gate.dart';
 
 import 'package:locai/pages/signIn/sign_in_page.dart';
@@ -29,7 +30,8 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
-        ChangeNotifierProvider(create: (_) => FavoritesProvider(FavoritesRepository()))
+        ChangeNotifierProvider(create: (_) => FavoritesProvider(FavoritesRepository())),
+        ChangeNotifierProvider(create: (_) => SearchProvider())
       ],
       child: const MyApp(),
     ),

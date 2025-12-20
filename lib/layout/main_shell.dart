@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:locai/providers/search_provider.dart';
+
 import 'package:locai/pages/giveFeedback/give_feedback_page.dart';
 import 'package:locai/pages/recentSearches/recent_searches_page.dart';
 import 'package:locai/pages/reportBug/report_bug_page.dart';
@@ -38,14 +42,23 @@ class _MainShellState extends State<MainShell> {
 
   void _onTabSelected(int i) {
     if (i == _index) return;
-
-    setState(() {
-      _index = i;
-    });
+    setState(() => _index = i);
   }
 
   @override
   Widget build(BuildContext context) {
+    final searchProvider = context.watch<SearchProvider>();
+
+    // If a search query is set, always switch to Home tab
+    if (searchProvider.query != null && _index != 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        setState(() {
+          _index = 0;
+        });
+      });
+    }
+
     return Scaffold(
       appBar: CustomAppBar(title: _titles[_index]),
       body: _pages[_index],
@@ -93,7 +106,8 @@ class _MainShellState extends State<MainShell> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => const RecentSearchesPage()),
+                    builder: (_) => const RecentSearchesPage(),
+                  ),
                 );
               },
             ),
@@ -104,7 +118,8 @@ class _MainShellState extends State<MainShell> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => const GiveFeedbackPage()),
+                    builder: (_) => const GiveFeedbackPage(),
+                  ),
                 );
               },
             ),
@@ -114,7 +129,9 @@ class _MainShellState extends State<MainShell> {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const ReportBugPage()),
+                  MaterialPageRoute(
+                    builder: (_) => const ReportBugPage(),
+                  ),
                 );
               },
             ),

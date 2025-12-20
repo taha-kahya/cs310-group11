@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:locai/providers/search_provider.dart';
 
 class SuggestionsPage extends StatefulWidget {
   const SuggestionsPage({super.key});
@@ -8,7 +11,6 @@ class SuggestionsPage extends StatefulWidget {
 }
 
 class _SuggestionsPageState extends State<SuggestionsPage> {
-
   final List<String> suggestions = [
     'Sushi, noodles, and flavors',
     'Quick, fresh, and flavorful ramen',
@@ -16,11 +18,7 @@ class _SuggestionsPageState extends State<SuggestionsPage> {
   ];
 
   void _onSuggestionTap(String suggestion) {
-    Navigator.pushNamed(
-      context,
-      '/home',
-      arguments: suggestion,
-    );
+    context.read<SearchProvider>().setQuery(suggestion);
   }
 
   @override
@@ -50,6 +48,7 @@ class _SuggestionsPageState extends State<SuggestionsPage> {
                 separatorBuilder: (_, __) => const SizedBox(height: 8),
                 itemBuilder: (context, index) {
                   final suggestion = suggestions[index];
+
                   return Card(
                     elevation: 2,
                     child: ListTile(
