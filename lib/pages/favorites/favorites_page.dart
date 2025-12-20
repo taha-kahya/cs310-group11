@@ -126,10 +126,7 @@ class _SortRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Text(
-          'Sort by',
-          style: TextStyle(color: Colors.black54, fontSize: 16),
-        ),
+        const Text('Sort by', style: TextStyle(color: Colors.grey)),
         const SizedBox(width: 10),
         DropdownButton<String>(
           value: selectedSort,

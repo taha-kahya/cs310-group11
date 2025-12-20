@@ -83,11 +83,11 @@ class _MainShellState extends State<MainShell> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
-              child: Text(
-                "LocAI",
-                style: TextStyle(color: Colors.black, fontSize: 24),
-              ),
+             DrawerHeader(
+               child: Text(
+                 "LocAI",
+                 style: Theme.of(context).textTheme.headlineSmall,
+               ),
             ),
             ListTile(
               title: const Text("Settings"),
