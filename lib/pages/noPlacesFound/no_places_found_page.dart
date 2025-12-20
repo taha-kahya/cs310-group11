@@ -8,24 +8,24 @@ class NoPlacesFoundPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          icon: Icon(Icons.arrow_back_ios_new, color: Theme.of(context).iconTheme.color),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
+        title: Text(
           'Search',
           style: TextStyle(
-            color: Colors.black,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
             fontWeight: FontWeight.w600,
           ),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: Theme.of(context).iconTheme.color),
       ),
 
       body: Padding(
@@ -82,13 +82,13 @@ class NoPlacesFoundPage extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            const Text(
-              'We couldn’t find any results for your query.\n'
+            Text(
+              'We couldn't find any results for your query.\n'
                   'Try adjusting your keywords and/or radius',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
-                color: Colors.black54,
+                color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
               ),
             ),
 

@@ -171,7 +171,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                   ),
                 ),
                 child: _isSubmitting
-                    ? const CircularProgressIndicator(color: Colors.white)
+                    ? CircularProgressIndicator(color: Theme.of(context).colorScheme.onPrimary)
                     : Text(
                   "Submit",
                   style: AppTextStyles.subheading.copyWith(

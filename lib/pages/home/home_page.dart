@@ -152,7 +152,9 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Container(
-      color: const Color(0xFFF7F7F7),
+      color: Theme.of(context).brightness == Brightness.dark
+          ? Theme.of(context).scaffoldBackgroundColor
+          : const Color(0xFFF7F7F7),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -166,18 +168,24 @@ class _HomePageState extends State<HomePage> {
                 hintText: 'Search for the place in your mind',
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.grey.shade800
+                    : Colors.white,
                 contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide:
-                  const BorderSide(color: Color(0xFFE0E0E0)),
+                  BorderSide(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : const Color(0xFFE0E0E0)),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide:
-                  const BorderSide(color: Color(0xFFE0E0E0)),
+                  BorderSide(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : const Color(0xFFE0E0E0)),
                 ),
               ),
             ),

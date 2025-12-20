@@ -81,7 +81,7 @@ class _SignUpPageState extends State<SignUpPage> {
     final auth = context.watch<AuthProvider>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -95,10 +95,10 @@ class _SignUpPageState extends State<SignUpPage> {
                 Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.public, size: 48, color: Colors.black),
-                      SizedBox(width: 12),
-                      Text(
+                    children: [
+                      Icon(Icons.public, size: 48, color: Theme.of(context).colorScheme.primary),
+                      const SizedBox(width: 12),
+                      const Text(
                         "LocAI",
                         style: TextStyle(
                           fontSize: 36,
@@ -146,7 +146,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   decoration: InputDecoration(
                     hintText: "username",
                     filled: true,
-                    fillColor: Colors.grey.shade300,
+                    fillColor: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade300,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide.none,
@@ -185,7 +187,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   decoration: InputDecoration(
                     hintText: "email@example.com",
                     filled: true,
-                    fillColor: Colors.grey.shade300,
+                    fillColor: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade300,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide.none,
@@ -224,7 +228,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   decoration: InputDecoration(
                     hintText: "******",
                     filled: true,
-                    fillColor: Colors.grey.shade300,
+                    fillColor: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade300,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide.none,
@@ -243,7 +249,8 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: ElevatedButton(
                     onPressed: auth.isLoading ? null : _handleSignUp,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
@@ -251,13 +258,13 @@ class _SignUpPageState extends State<SignUpPage> {
                       elevation: 0,
                     ),
                     child: auth.isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
+                        ? CircularProgressIndicator(color: Theme.of(context).colorScheme.onPrimary)
+                        : Text(
                       "Sign up",
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
                   ),
@@ -268,17 +275,17 @@ class _SignUpPageState extends State<SignUpPage> {
                 Center(
                   child: GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: const Text.rich(
+                    child: Text.rich(
                       TextSpan(
                         text: "Already registered? ",
                         style:
-                        TextStyle(fontSize: 15, color: Colors.black54),
+                        TextStyle(fontSize: 15, color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6)),
                         children: [
                           TextSpan(
                             text: "Log in.",
                             style: TextStyle(
                               fontSize: 15,
-                              color: Colors.black,
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w600,
                             ),
                           ),

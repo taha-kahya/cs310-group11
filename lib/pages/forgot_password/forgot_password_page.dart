@@ -39,7 +39,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -53,10 +53,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 // ---------- LOGO ----------
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.public, size: 48, color: Colors.black),
-                    SizedBox(width: 12),
-                    Text(
+                  children: [
+                    Icon(Icons.public, size: 48, color: Theme.of(context).colorScheme.primary),
+                    const SizedBox(width: 12),
+                    const Text(
                       "LocAI",
                       style: TextStyle(
                         fontSize: 36,
@@ -76,10 +76,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 16), // slightly increased
-                const Text(
-                  "Enter your email and we’ll send you a reset link.",
+                Text(
+                  "Enter your email and we'll send you a reset link.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 15, color: Colors.black54),
+                  style: TextStyle(fontSize: 15, color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6)),
                 ),
 
                 const SizedBox(height: 55), // <<-- increased from 40
@@ -110,7 +110,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   decoration: InputDecoration(
                     hintText: "username@email.com",
                     filled: true,
-                    fillColor: Colors.grey.shade300,
+                    fillColor: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade300,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide.none,
@@ -133,18 +135,19 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
+                    child: Text(
                       "Send reset link",
                       style: TextStyle(
                         fontSize: 17,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -155,11 +158,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
-                  child: const Text(
+                  child: Text(
                     "Back to Login",
                     style: TextStyle(
                       fontSize: 15,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       decoration: TextDecoration.underline,
                       fontWeight: FontWeight.w600,
                     ),

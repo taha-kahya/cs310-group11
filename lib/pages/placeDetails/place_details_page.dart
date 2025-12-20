@@ -19,12 +19,12 @@ class PlaceDetailsPage extends StatelessWidget {
     );
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: Theme.of(context).iconTheme.color),
         title: Text(
           place.name,
           style: AppTextStyles.subheading
@@ -38,16 +38,17 @@ class PlaceDetailsPage extends StatelessWidget {
           height: 52,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
             onPressed: () {},
-            child: const Text(
+            child: Text(
               'Create Route',
               style: TextStyle(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onPrimary,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -78,12 +79,14 @@ class PlaceDetailsPage extends StatelessWidget {
                     padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey.shade800
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(999),
                       boxShadow: [
                         BoxShadow(
                           blurRadius: 4,
-                          color: Colors.black.withOpacity(0.12),
+                          color: Theme.of(context).shadowColor.withOpacity(0.12),
                         ),
                       ],
                     ),

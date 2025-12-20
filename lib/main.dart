@@ -76,7 +76,16 @@ class _MyAppState extends State<MyApp> {
           debugShowCheckedModeBanner: false,
 
           theme: ThemeData(
+            brightness: Brightness.light,
             fontFamily: 'Poppins',
+            scaffoldBackgroundColor: Colors.white,
+            colorScheme: const ColorScheme.light(
+              primary: Colors.black,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+            iconTheme: const IconThemeData(color: Colors.black),
             textTheme: const TextTheme(
               headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -90,13 +99,21 @@ class _MyAppState extends State<MyApp> {
           darkTheme: ThemeData(
             brightness: Brightness.dark,
             fontFamily: 'Poppins',
+            scaffoldBackgroundColor: const Color(0xFF121212),
+            colorScheme: const ColorScheme.dark(
+              primary: Colors.white,
+              onPrimary: Colors.black,
+              surface: Color(0xFF1E1E1E),
+              onSurface: Colors.white,
+            ),
+            iconTheme: const IconThemeData(color: Colors.white),
             textTheme: const TextTheme(
-              headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-              headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              headlineSmall: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              bodyLarge: TextStyle(fontSize: 16),
-              bodyMedium: TextStyle(fontSize: 14),
-              bodySmall: TextStyle(fontSize: 12),
+              headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+              headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+              headlineSmall: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+              bodyLarge: TextStyle(fontSize: 16, color: Colors.white),
+              bodyMedium: TextStyle(fontSize: 14, color: Colors.white70),
+              bodySmall: TextStyle(fontSize: 12, color: Colors.white60),
             ),
           ),
 

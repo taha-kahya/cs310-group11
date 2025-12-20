@@ -43,7 +43,9 @@ class _ProfilePageState extends State<ProfilePage> {
             decoration: InputDecoration(
               hintText: "Enter new username",
               filled: true,
-              fillColor: Colors.grey.shade200,
+              fillColor: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade800
+                  : Colors.grey.shade200,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -101,7 +103,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   decoration: InputDecoration(
                     hintText: "New password",
                     filled: true,
-                    fillColor: Colors.grey.shade200,
+                    fillColor: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade200,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -121,7 +125,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   decoration: InputDecoration(
                     hintText: "Confirm password",
                     filled: true,
-                    fillColor: Colors.grey.shade200,
+                    fillColor: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade200,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -200,7 +206,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return SafeArea(
       child: Container(
-        color: Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: SingleChildScrollView(
           child: Padding(
             padding:
@@ -210,10 +216,10 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 SizedBox(height: size.height * 0.04),
 
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 50,
-                  backgroundColor: Color(0xFF333333),
-                  child: Icon(Icons.person, size: 56, color: Colors.white),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  child: Icon(Icons.person, size: 56, color: Theme.of(context).colorScheme.onPrimary),
                 ),
 
                 const SizedBox(height: 16),
@@ -272,7 +278,6 @@ class _ProfileOption extends StatelessWidget {
     required this.title,
     required this.onTap,
     this.colorRed = false,
-    super.key,
   });
 
   @override
@@ -288,13 +293,13 @@ class _ProfileOption extends StatelessWidget {
               title,
               style: TextStyle(
                 fontSize: 16,
-                color: colorRed ? Colors.red : Colors.black,
+                color: colorRed ? Colors.red : Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const Icon(
+            Icon(
               Icons.chevron_right,
-              color: Colors.black45,
+              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
               size: 20,
             ),
           ],
@@ -313,7 +318,6 @@ class _ProfileToggleOption extends StatelessWidget {
     required this.title,
     required this.value,
     required this.onChanged,
-    super.key,
   });
 
   @override
@@ -333,7 +337,7 @@ class _ProfileToggleOption extends StatelessWidget {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.black,
+            activeColor: Theme.of(context).colorScheme.primary,
           ),
         ],
       ),

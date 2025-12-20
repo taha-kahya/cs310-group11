@@ -59,7 +59,7 @@ class _SignInPageState extends State<SignInPage> {
     final auth = context.watch<AuthProvider>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -72,10 +72,10 @@ class _SignInPageState extends State<SignInPage> {
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.public, size: 48, color: Colors.black),
-                    SizedBox(width: 12),
-                    Text(
+                  children: [
+                    Icon(Icons.public, size: 48, color: Theme.of(context).colorScheme.primary),
+                    const SizedBox(width: 12),
+                    const Text(
                       "LocAI",
                       style: TextStyle(
                         fontSize: 36,
@@ -95,11 +95,11 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                const Text(
+                Text(
                   "Sign in to continue.",
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.black54,
+                    color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
                   ),
                 ),
 
@@ -132,7 +132,9 @@ class _SignInPageState extends State<SignInPage> {
                   decoration: InputDecoration(
                     hintText: "email@example.com",
                     filled: true,
-                    fillColor: Colors.grey.shade300,
+                    fillColor: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade300,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide.none,
@@ -173,7 +175,9 @@ class _SignInPageState extends State<SignInPage> {
                   decoration: InputDecoration(
                     hintText: "******",
                     filled: true,
-                    fillColor: Colors.grey.shade300,
+                    fillColor: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade300,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide.none,
@@ -192,7 +196,8 @@ class _SignInPageState extends State<SignInPage> {
                   child: ElevatedButton(
                     onPressed: auth.isLoading ? null : _handleLogin,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
@@ -200,12 +205,12 @@ class _SignInPageState extends State<SignInPage> {
                       elevation: 0,
                     ),
                     child: auth.isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
+                        ? CircularProgressIndicator(color: Theme.of(context).colorScheme.onPrimary)
+                        : Text(
                       "Log in",
                       style: TextStyle(
                         fontSize: 17,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -217,9 +222,9 @@ class _SignInPageState extends State<SignInPage> {
                 GestureDetector(
                   onTap: () =>
                       Navigator.pushNamed(context, "/forgot-password"),
-                  child: const Text(
+                  child: Text(
                     "Forgot your password?",
-                    style: TextStyle(fontSize: 15, color: Colors.black54),
+                    style: TextStyle(fontSize: 15, color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6)),
                   ),
                 ),
 

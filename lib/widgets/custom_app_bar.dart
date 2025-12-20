@@ -27,7 +27,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       leading: showBack
           ? IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.black),
+        icon: Icon(Icons.arrow_back, color: Theme.of(context).iconTheme.color),
         onPressed: onBack ?? () => Navigator.of(context).pop(),
       )
           : null,
@@ -39,7 +39,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ? [
         Builder(
           builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: Colors.black),
+            icon: Icon(Icons.menu, color: Theme.of(context).iconTheme.color),
             onPressed: onMenu ??
                     () {
                   final scaffoldState = Scaffold.maybeOf(context);

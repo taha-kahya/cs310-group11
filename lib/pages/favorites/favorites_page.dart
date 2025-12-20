@@ -41,7 +41,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
       });
 
     return Container(
-      color: const Color(0xFFF7F7F7),
+      color: Theme.of(context).brightness == Brightness.dark
+          ? Theme.of(context).scaffoldBackgroundColor
+          : const Color(0xFFF7F7F7),
       child: ListView(
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
         children: [
@@ -56,7 +58,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
           const SizedBox(height: 6),
           Text(
             '${sortedFavorites.length} favorites',
-            style: const TextStyle(color: Colors.black45),
+            style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6)),
           ),
           const SizedBox(height: 16),
           if (sortedFavorites.isEmpty)
@@ -65,21 +67,21 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 padding: const EdgeInsets.only(top: 60),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     Icon(Icons.favorite_border, size: 72, color: Colors.grey),
-                    SizedBox(height: 16),
-                    Text(
+                    const SizedBox(height: 16),
+                    const Text(
                       'No favorites yet',
                       style:
                       TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       'Tap the heart icon on a place\non the Home tab to save it here.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.black54,
+                        color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
                         height: 1.4,
                       ),
                     ),

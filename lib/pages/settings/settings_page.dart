@@ -30,18 +30,18 @@ class SettingsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).iconTheme.color),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           "Settings",
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
           ),
         ),
       ),
@@ -56,7 +56,7 @@ class SettingsPage extends StatelessWidget {
               style: TextStyle(fontSize: 16),
             ),
             value: prefs.darkMode,
-            activeTrackColor: Colors.black,
+            activeTrackColor: Theme.of(context).colorScheme.primary,
             onChanged: (v) {
               context.read<PreferencesState>().setDarkMode(v);
             },
@@ -69,7 +69,7 @@ class SettingsPage extends StatelessWidget {
               style: TextStyle(fontSize: 16),
             ),
             value: settings.onlyOpenPlaces,
-            activeTrackColor: Colors.black,
+            activeTrackColor: Theme.of(context).colorScheme.primary,
             onChanged: (_) {
               context.read<SettingsProvider>().toggleOnlyOpenPlaces();
             },

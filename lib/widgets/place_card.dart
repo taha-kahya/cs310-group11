@@ -166,7 +166,7 @@ class _PlaceCardState extends State<PlaceCard> {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 13,
-                        color: Colors.black87,
+                        color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.87),
                         height: 1.4,
                       ),
                     ),

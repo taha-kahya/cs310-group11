@@ -149,7 +149,7 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
                           }
                         }(),
                         size: 32,
-                        color: Colors.black,
+                        color: Theme.of(context).iconTheme.color,
                       ),
                     ),
                   ),
@@ -177,7 +177,7 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
                   ),
                 ),
                 child: _isSubmitting
-                    ? const CircularProgressIndicator(color: Colors.white)
+                    ? CircularProgressIndicator(color: Theme.of(context).colorScheme.onPrimary)
                     : Text(
                   "Submit",
                   style: AppTextStyles.subheading.copyWith(
