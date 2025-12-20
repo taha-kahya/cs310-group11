@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:locai/providers/auth_provider.dart';
+import 'package:locai/repositories/user_profile_repository.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -10,8 +11,38 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final UserProfileRepository _profileRepo = UserProfileRepository();
+
   String _username = "Username";
   bool _notificationsEnabled = true;
+  String? _uid; // ✅ cache uid once
+
+  @override
+  void initState() {
+    super.initState();
+
+    final user = context.read<AuthProvider>().currentUser;
+    _uid = user?.uid;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadUsername();
+    });
+  }
+
+  Future<void> _loadUsername() async {
+    if (_uid == null) return;
+
+    try {
+      final profile = await _profileRepo.getProfile(_uid!);
+      if (!mounted) return;
+
+      if (profile != null && profile.username.trim().isNotEmpty) {
+        setState(() => _username = profile.username.trim());
+      }
+    } catch (_) {
+      // silent fail — keep default username
+    }
+  }
 
   void _showErrorDialog(String message) {
     showDialog(
@@ -59,11 +90,19 @@ class _ProfilePageState extends State<ProfilePage> {
             child: const Text("Cancel"),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               final newName = _usernameCtrl.text.trim();
-              if (newName.isNotEmpty) {
+              if (newName.isEmpty || _uid == null) return;
+
+              try {
+                await _profileRepo.updateUsername(_uid!, newName);
+                if (!mounted) return;
+
                 setState(() => _username = newName);
                 Navigator.pop(context);
+              } catch (_) {
+                Navigator.pop(context);
+                _showErrorDialog("Failed to update username. Please try again.");
               }
             },
             child: const Text("Save"),
@@ -185,8 +224,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Navigator.pop(context);
               try {
                 await context.read<AuthProvider>().logout();
-                // AuthGate will redirect automatically
-              } catch (e) {
+              } catch (_) {
                 _showErrorDialog("Logout failed. Please try again.");
               }
             },
@@ -219,7 +257,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 CircleAvatar(
                   radius: 50,
                   backgroundColor: Theme.of(context).colorScheme.primary,
-                  child: Icon(Icons.person, size: 56, color: Theme.of(context).colorScheme.onPrimary),
+                  child: Icon(
+                    Icons.person,
+                    size: 56,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
                 ),
 
                 const SizedBox(height: 16),
@@ -293,13 +335,19 @@ class _ProfileOption extends StatelessWidget {
               title,
               style: TextStyle(
                 fontSize: 16,
-                color: colorRed ? Colors.red : Theme.of(context).textTheme.bodyLarge?.color,
+                color: colorRed
+                    ? Colors.red
+                    : Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.w500,
               ),
             ),
             Icon(
               Icons.chevron_right,
-              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
+              color: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.color
+                  ?.withOpacity(0.6),
               size: 20,
             ),
           ],

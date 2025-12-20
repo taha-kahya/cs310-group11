@@ -10,7 +10,13 @@ class UserProfileRepository {
     return _firestore
         .collection(_collection)
         .doc(profile.uid)
-        .set(profile.toMap());
+        .set(
+      {
+        'username': profile.username,
+        'createdAt': FieldValue.serverTimestamp(),
+      },
+      SetOptions(merge: true),
+    );
   }
 
   /// READ
@@ -24,8 +30,9 @@ class UserProfileRepository {
 
   /// UPDATE
   Future<void> updateUsername(String uid, String newUsername) {
-    return _firestore.collection(_collection).doc(uid).update({
-      'username': newUsername,
-    });
+    return _firestore.collection('users').doc(uid).set(
+      {'username': newUsername},
+      SetOptions(merge: true),
+    );
   }
 }
