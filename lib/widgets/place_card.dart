@@ -164,9 +164,14 @@ class _PlaceCardState extends State<PlaceCard> {
                       place.description,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
-                        color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.87),
+                        color: Theme.of(context)
+                            .textTheme
+                            .bodyLarge
+                            ?.color
+                            ?.withOpacity(0.87)
+                            ?? Colors.black87,
                         height: 1.4,
                       ),
                     ),
