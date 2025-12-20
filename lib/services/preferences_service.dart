@@ -5,15 +5,11 @@ class PreferencesService {
 
   Future<bool> loadDarkMode() async {
     final prefs = await SharedPreferences.getInstance();
-    final v = prefs.getBool(_darkModeKey) ?? false;
-    print("🔵 LOAD darkMode = $v (key: $_darkModeKey)");
-    return v;
+    return prefs.getBool(_darkModeKey) ?? false;
   }
 
   Future<void> saveDarkMode(bool value) async {
-    print("🟢 SAVE darkMode = $value (key: $_darkModeKey)");
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_darkModeKey, value);
-    print("✅ SAVED to SharedPreferences");
   }
 }
