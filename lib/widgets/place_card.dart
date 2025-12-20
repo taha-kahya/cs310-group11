@@ -22,7 +22,7 @@ class PlaceCard extends StatefulWidget {
   final bool isInitiallyFavorite;
 
   /// Called whenever the heart is toggled (true = favorite, false = not)
-  final ValueChanged<bool>? onFavoriteChanged;
+  final Future<void> Function(bool)? onFavoriteChanged;
 
   const PlaceCard({
     super.key,
@@ -37,7 +37,8 @@ class PlaceCard extends StatefulWidget {
 }
 
 class _PlaceCardState extends State<PlaceCard> {
-  bool _isFavorite = false; // UI only
+  bool _isFavorite = false;
+  bool _isProcessing = false;
 
   @override
   void initState() {
@@ -49,7 +50,44 @@ class _PlaceCardState extends State<PlaceCard> {
   void didUpdateWidget(covariant PlaceCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.isInitiallyFavorite != widget.isInitiallyFavorite) {
-      _isFavorite = widget.isInitiallyFavorite;
+      setState(() {
+        _isFavorite = widget.isInitiallyFavorite;
+      });
+    }
+  }
+
+  Widget _buildImage(String imageUrl) {
+    // Check if it's an asset or network image
+    if (imageUrl.startsWith('assets/')) {
+      return Image.asset(
+        imageUrl,
+        width: 115,
+        height: 115,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            width: 115,
+            height: 115,
+            color: Colors.grey[300],
+            child: const Icon(Icons.restaurant, size: 40, color: Colors.grey),
+          );
+        },
+      );
+    } else {
+      return Image.network(
+        imageUrl,
+        width: 115,
+        height: 115,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            width: 115,
+            height: 115,
+            color: Colors.grey[300],
+            child: const Icon(Icons.restaurant, size: 40, color: Colors.grey),
+          );
+        },
+      );
     }
   }
 
@@ -81,12 +119,7 @@ class _PlaceCardState extends State<PlaceCard> {
               // Image
               ClipRRect(
                 borderRadius: BorderRadius.circular(14),
-                child: Image.network(
-                  place.imageUrl,
-                  width: 115,
-                  height: 115,
-                  fit: BoxFit.cover,
-                ),
+                child: _buildImage(place.imageUrl),
               ),
               const SizedBox(width: 14),
 
@@ -162,13 +195,46 @@ class _PlaceCardState extends State<PlaceCard> {
                           ],
                         ),
 
-                        // Heart icon (just visual toggle)
-                        GestureDetector(
-                          onTap: () {
+                        // Heart icon with loading state
+                        _isProcessing
+                            ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        )
+                            : GestureDetector(
+                          onTap: () async {
+                            if (_isProcessing) return;
+
                             setState(() {
-                              _isFavorite = !_isFavorite;
+                              _isProcessing = true;
                             });
-                            widget.onFavoriteChanged?.call(_isFavorite);
+
+                            final newState = !_isFavorite;
+
+                            try {
+                              final callback = widget.onFavoriteChanged;
+                              if (callback != null) {
+                                await callback(newState);
+                              }
+                            } catch (e) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Error: ${e.toString()}'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            } finally {
+                              if (mounted) {
+                                setState(() {
+                                  _isProcessing = false;
+                                });
+                              }
+                            }
                           },
                           child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 200),

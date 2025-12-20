@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:locai/widgets/place_card.dart';
-import 'package:locai/state/favorites_state.dart';
+import 'package:locai/models/favorite_place.dart';
+import 'package:locai/providers/favorites_provider.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -12,95 +15,98 @@ class FavoritesPage extends StatefulWidget {
 class _FavoritesPageState extends State<FavoritesPage> {
   String _selectedSort = "Rating";
 
-  List<Place> _sortFavorites(List<Place> list) {
-    final sorted = List<Place>.from(list);
-
-    if (_selectedSort == "Rating") {
-      sorted.sort((a, b) => b.rating.compareTo(a.rating)); // High → Low
-    } else if (_selectedSort == "Name") {
-      sorted.sort((a, b) => a.name.compareTo(b.name)); // A → Z
-    }
-
-    return sorted;
+  Place _toPlace(FavoritePlace fav) {
+    return Place(
+      name: fav.name,
+      rating: fav.rating,
+      description: fav.preview,
+      imageUrl: fav.imageUrl,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<List<Place>>(
-      valueListenable: FavoritesState.instance.favorites,
-      builder: (context, favorites, _) {
-        final sortedFavorites = _sortFavorites(favorites);
+    final favProvider = context.watch<FavoritesProvider>();
+    final uid = FirebaseAuth.instance.currentUser!.uid;
 
-        return ListView(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-          children: [
-            _SortRow(
-              selectedSort: _selectedSort,
-              onSortChanged: (value) {
-                setState(() {
-                  _selectedSort = value;
-                });
-              },
-            ),
+    final favorites = favProvider.favorites;
 
-            const SizedBox(height: 6),
+    final sortedFavorites = List<FavoritePlace>.from(favorites)
+      ..sort((a, b) {
+        if (_selectedSort == "Rating") {
+          return b.rating.compareTo(a.rating);
+        } else {
+          return a.name.compareTo(b.name);
+        }
+      });
 
-            Text(
-              '${sortedFavorites.length} favorites',
-              style: const TextStyle(color: Colors.black45),
-            ),
-
-            const SizedBox(height: 16),
-
-            if (sortedFavorites.isEmpty)
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 60),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Icon(
-                        Icons.favorite_border,
-                        size: 72,
-                        color: Colors.grey,
+    return Container(
+      color: const Color(0xFFF7F7F7),
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+        children: [
+          _SortRow(
+            selectedSort: _selectedSort,
+            onSortChanged: (value) {
+              setState(() {
+                _selectedSort = value;
+              });
+            },
+          ),
+          const SizedBox(height: 6),
+          Text(
+            '${sortedFavorites.length} favorites',
+            style: const TextStyle(color: Colors.black45),
+          ),
+          const SizedBox(height: 16),
+          if (sortedFavorites.isEmpty)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 60),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(Icons.favorite_border, size: 72, color: Colors.grey),
+                    SizedBox(height: 16),
+                    Text(
+                      'No favorites yet',
+                      style:
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Tap the heart icon on a place\non the Home tab to save it here.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black54,
+                        height: 1.4,
                       ),
-                      SizedBox(height: 16),
-                      Text(
-                        'No favorites yet',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'Tap the heart icon on a place\non the Home tab to save it here.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black54,
-                          height: 1.4,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              )
-            else
-              for (int i = 0; i < sortedFavorites.length; i++)
-                PlaceCard(
-                  place: sortedFavorites[i],
-                  isInitiallyFavorite: true,
-                  onFavoriteChanged: (isFavorite) {
-                    if (!isFavorite) {
-                      FavoritesState.instance
-                          .setFavorite(sortedFavorites[i], false);
-                    }
-                  },
-                ),
-          ],
-        );
-      },
+              ),
+            )
+          else
+            for (final fav in sortedFavorites)
+              PlaceCard(
+                key: ValueKey(fav.placeId),
+                place: _toPlace(fav),
+                isInitiallyFavorite: true,
+                onFavoriteChanged: (isFavorite) async {
+                  if (!isFavorite) {
+                    // Remove from favorites
+                    await favProvider.toggleFavorite(
+                      uid: uid,
+                      placeId: fav.placeId,
+                      fav: null,
+                      makeFavorite: false,
+                    );
+                  }
+                },
+              ),
+        ],
+      ),
     );
   }
 }
@@ -117,25 +123,17 @@ class _SortRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const Text(
           'Sort by',
           style: TextStyle(color: Colors.black54, fontSize: 16),
         ),
         const SizedBox(width: 10),
-
         DropdownButton<String>(
           value: selectedSort,
           items: const [
-            DropdownMenuItem(
-              value: "Rating",
-              child: Text("Rating"),
-            ),
-            DropdownMenuItem(
-              value: "Name",
-              child: Text("Name"),
-            ),
+            DropdownMenuItem(value: "Rating", child: Text("Rating")),
+            DropdownMenuItem(value: "Name", child: Text("Name")),
           ],
           underline: const SizedBox(),
           onChanged: (value) {

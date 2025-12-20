@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:locai/providers/favorites_provider.dart';
 import 'package:locai/providers/settings_provider.dart';
+import 'package:locai/repositories/favorites_repository.dart';
 import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
@@ -28,7 +29,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
-        ChangeNotifierProvider(create: (_) => FavoritesProvider())
+        ChangeNotifierProvider(create: (_) => FavoritesProvider(FavoritesRepository()))
       ],
       child: const MyApp(),
     ),
