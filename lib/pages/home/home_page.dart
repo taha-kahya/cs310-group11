@@ -7,6 +7,8 @@ import 'package:locai/utils/text_styles.dart';
 import 'package:locai/pages/noPlacesFound/no_places_found_page.dart';
 import 'package:locai/providers/favorites_provider.dart';
 import 'package:locai/models/favorite_place.dart';
+import 'package:locai/models/search_history.dart';
+import 'package:locai/repositories/recent_searches_repository.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,6 +25,8 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   bool _hasAppliedInitialSuggestion = false;
   Timer? _debounce;
+  final RecentSearchesRepository _searchRepo = RecentSearchesRepository();
+  String? _lastSavedQuery;
 
   @override
   void initState() {
@@ -69,7 +73,7 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  void _onSearchChanged(String value) {
+  void _onSearchChanged(String value) async {
     final query = value.toLowerCase();
     List<Place> results;
 
@@ -79,6 +83,26 @@ class _HomePageState extends State<HomePage> {
       results = _allPlaces
           .where((place) => place.name.toLowerCase().contains(query))
           .toList();
+
+      // Save to recent searches (only if query changed and not empty)
+      final trimmedQuery = value.trim();
+      if (trimmedQuery.isNotEmpty && trimmedQuery != _lastSavedQuery) {
+        _lastSavedQuery = trimmedQuery;
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          try {
+            final search = SearchHistory(
+              id: '',
+              query: trimmedQuery,
+              createdBy: user.uid,
+              createdAt: DateTime.now(),
+            );
+            await _searchRepo.addSearch(search);
+          } catch (e) {
+            // Silently fail - don't interrupt search flow
+          }
+        }
+      }
 
       if (results.isEmpty) {
         Navigator.push(
