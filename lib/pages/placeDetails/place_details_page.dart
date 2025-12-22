@@ -18,16 +18,20 @@ class PlaceDetailsPage extends StatelessWidget {
       'https://via.placeholder.com/600x300.png?text=No+Image',
     );
 
+    final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         centerTitle: true,
-        iconTheme: IconThemeData(color: Theme.of(context).iconTheme.color),
+        iconTheme: IconThemeData(color: colors.onSurface),
         title: Text(
           place.name,
-          style: AppTextStyles.subheading
+          style: AppTextStyles.subheading.copyWith(
+            color: colors.onSurface,
+          ),
         ),
       ),
 
@@ -38,17 +42,16 @@ class PlaceDetailsPage extends StatelessWidget {
           height: 52,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              backgroundColor: colors.primary,
+              foregroundColor: colors.onPrimary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
             onPressed: () {},
-            child: Text(
+            child: const Text(
               'Create Route',
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -79,14 +82,13 @@ class PlaceDetailsPage extends StatelessWidget {
                     padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.grey.shade800
-                          : Colors.white,
+                      color: colors.surface,
                       borderRadius: BorderRadius.circular(999),
                       boxShadow: [
                         BoxShadow(
                           blurRadius: 4,
-                          color: Theme.of(context).shadowColor.withOpacity(0.12),
+                          color:
+                          Theme.of(context).shadowColor.withOpacity(0.12),
                         ),
                       ],
                     ),
@@ -101,9 +103,10 @@ class PlaceDetailsPage extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           place.rating.toStringAsFixed(1),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 12,
+                            color: colors.onSurface,
                           ),
                         ),
                       ],
@@ -116,13 +119,14 @@ class PlaceDetailsPage extends StatelessWidget {
             const SizedBox(height: 24),
 
             // AI Summary header
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 'AI Summary',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
+                  color: colors.onSurface,
                 ),
               ),
             ),
@@ -137,17 +141,10 @@ class PlaceDetailsPage extends StatelessWidget {
                 padding:
                 const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
                 decoration: BoxDecoration(
-                  color: Color(0xFFFAF7F0),
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(18),
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                      color: Colors.black.withOpacity(0.05),
-                    ),
-                  ],
                 ),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -155,9 +152,10 @@ class PlaceDetailsPage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
+                        color: colors.onSurface,
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _BulletText('Customer favourite: Bento with sashimi'),
                     _BulletText('Atmosphere: Calm and cozy'),
                     _BulletText('Accessibility: Wheelchair accessible'),
@@ -169,13 +167,14 @@ class PlaceDetailsPage extends StatelessWidget {
             const SizedBox(height: 32),
 
             // General Information heading
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 'General Information',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
+                  color: colors.onSurface,
                 ),
               ),
             ),
@@ -183,13 +182,13 @@ class PlaceDetailsPage extends StatelessWidget {
             const SizedBox(height: 10),
 
             // Opening hours
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 'Opening Hours: 11.00 – 21.00',
                 style: TextStyle(
                   fontSize: 13,
-                  color: Colors.black87,
+                  color: colors.onSurface.withOpacity(0.75),
                   height: 1.5,
                 ),
               ),
@@ -209,21 +208,27 @@ class _BulletText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '•  ',
-            style: TextStyle(fontSize: 13, height: 1.4),
+            style: TextStyle(
+              fontSize: 13,
+              height: 1.4,
+              color: colors.onSurface,
+            ),
           ),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: Colors.black87,
+                color: colors.onSurface,
                 height: 1.4,
               ),
             ),
