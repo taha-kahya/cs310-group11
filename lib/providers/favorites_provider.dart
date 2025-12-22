@@ -19,6 +19,8 @@ class FavoritesProvider extends ChangeNotifier {
   void start(String uid) {
     _sub?.cancel();
 
+    _byPlaceId.clear();
+
     isLoading = true;
     error = null;
     notifyListeners();
