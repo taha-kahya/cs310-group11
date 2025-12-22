@@ -44,3 +44,5 @@ Firebase is used to store user favorites, search history, and preferences, makin
 - **lib/widgets:** Stores the custom widgets. For an example, the place_card.dart file provides a way to reuse our custom card widget in multiple pages easily. 
 
 This readme file will be updated as the project progresses.
+
+**Update:** Google Maps API is going to integrated in the last step of the project. For now, in the home page, we still display placeholder data.
