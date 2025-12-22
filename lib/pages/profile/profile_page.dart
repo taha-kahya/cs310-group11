@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:locai/providers/auth_provider.dart';
 import 'package:locai/repositories/user_profile_repository.dart';
+import 'package:locai/models/user_profile.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -13,35 +14,13 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final UserProfileRepository _profileRepo = UserProfileRepository();
 
-  String _username = "Username";
   bool _notificationsEnabled = true;
-  String? _uid; // ✅ cache uid once
+  String? _uid;
 
   @override
   void initState() {
     super.initState();
-
-    final user = context.read<AuthProvider>().currentUser;
-    _uid = user?.uid;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadUsername();
-    });
-  }
-
-  Future<void> _loadUsername() async {
-    if (_uid == null) return;
-
-    try {
-      final profile = await _profileRepo.getProfile(_uid!);
-      if (!mounted) return;
-
-      if (profile != null && profile.username.trim().isNotEmpty) {
-        setState(() => _username = profile.username.trim());
-      }
-    } catch (_) {
-      // silent fail — keep default username
-    }
+    _uid = context.read<AuthProvider>().currentUser?.uid;
   }
 
   void _showErrorDialog(String message) {
@@ -60,9 +39,9 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  void _showChangeUsernamePopup() {
+  void _showChangeUsernamePopup(String currentUsername) {
     final TextEditingController _usernameCtrl =
-    TextEditingController(text: _username);
+    TextEditingController(text: currentUsername);
 
     showDialog(
       context: context,
@@ -97,8 +76,6 @@ class _ProfilePageState extends State<ProfilePage> {
               try {
                 await _profileRepo.updateUsername(_uid!, newName);
                 if (!mounted) return;
-
-                setState(() => _username = newName);
                 Navigator.pop(context);
               } catch (_) {
                 Navigator.pop(context);
@@ -247,8 +224,7 @@ class _ProfilePageState extends State<ProfilePage> {
         color: Theme.of(context).scaffoldBackgroundColor,
         child: SingleChildScrollView(
           child: Padding(
-            padding:
-            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -266,13 +242,26 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 const SizedBox(height: 16),
 
-                Text(
-                  _username,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                if (_uid != null)
+                  StreamBuilder<UserProfile?>(
+                    stream: _profileRepo.watchProfile(_uid!),
+                    builder: (context, snapshot) {
+                      final username =
+                      snapshot.data?.username.trim().isNotEmpty == true
+                          ? snapshot.data!.username.trim()
+                          : "Username";
+
+                      return Text(
+                        username,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      );
+                    },
+                  )
+                else
+                  const Text("Username"),
 
                 const SizedBox(height: 32),
 
@@ -293,7 +282,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 _ProfileOption(
                   title: "Change username",
-                  onTap: _showChangeUsernamePopup,
+                  onTap: () {
+                    if (_uid == null) return;
+                    _profileRepo.watchProfile(_uid!).first.then((profile) {
+                      _showChangeUsernamePopup(
+                        profile?.username ?? "Username",
+                      );
+                    });
+                  },
                 ),
                 const Divider(height: 1),
 
@@ -375,9 +371,9 @@ class _ProfileToggleOption extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
+          const Text(
+            "Notifications",
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),

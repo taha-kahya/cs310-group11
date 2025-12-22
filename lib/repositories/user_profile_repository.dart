@@ -20,12 +20,15 @@ class UserProfileRepository {
   }
 
   /// READ
-  Future<UserProfile?> getProfile(String uid) async {
-    final doc = await _firestore.collection(_collection).doc(uid).get();
-
-    if (!doc.exists) return null;
-
-    return UserProfile.fromDoc(doc);
+  Stream<UserProfile?> watchProfile(String uid) {
+    return _firestore
+        .collection(_collection)
+        .doc(uid)
+        .snapshots()
+        .map((doc) {
+      if (!doc.exists) return null;
+      return UserProfile.fromDoc(doc);
+    });
   }
 
   /// UPDATE
