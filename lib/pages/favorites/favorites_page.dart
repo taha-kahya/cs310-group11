@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:locai/widgets/place_card.dart';
 import 'package:locai/models/favorite_place.dart';
 import 'package:locai/providers/favorites_provider.dart';
+import 'package:locai/providers/auth_provider.dart' as app_auth;
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -27,9 +28,18 @@ class _FavoritesPageState extends State<FavoritesPage> {
   @override
   Widget build(BuildContext context) {
     final favProvider = context.watch<FavoritesProvider>();
-    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final auth = context.watch<app_auth.AuthProvider>();
+    final user = auth.currentUser;
 
+    if (user == null) {
+      return const Center(
+        child: Text('Please sign in to view favorites'),
+      );
+    }
+
+    final uid = user.uid;
     final favorites = favProvider.favorites;
+
 
     final sortedFavorites = List<FavoritePlace>.from(favorites)
       ..sort((a, b) {

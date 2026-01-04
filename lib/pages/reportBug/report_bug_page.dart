@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:provider/provider.dart';
 import 'package:locai/utils/colors.dart';
 import 'package:locai/utils/text_styles.dart';
 import 'package:locai/models/bug_report.dart';
 import 'package:locai/repositories/bug_reports_repository.dart';
+import 'package:locai/providers/auth_provider.dart';
 
 class ReportBugPage extends StatefulWidget {
   const ReportBugPage({super.key});
@@ -29,7 +29,17 @@ class _ReportBugPageState extends State<ReportBugPage> {
     setState(() => _isSubmitting = true);
 
     try {
-      final uid = FirebaseAuth.instance.currentUser!.uid;
+      final authProvider = context.read<AuthProvider>();
+      final user = authProvider.currentUser;
+
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You must be logged in to report a bug')),
+        );
+        return;
+      }
+
+      final uid = user.uid;
 
       final bug = BugReport(
         id: '',

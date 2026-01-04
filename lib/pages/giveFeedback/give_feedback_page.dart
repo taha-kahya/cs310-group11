@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:locai/utils/colors.dart';
+import 'package:provider/provider.dart';
+import 'package:locai/providers/auth_provider.dart' as app_auth;
 import 'package:locai/utils/text_styles.dart';
 import 'package:locai/models/user_feedback.dart';
 import 'package:locai/repositories/feedback_repository.dart';
@@ -26,18 +27,24 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
       return false;
     }
 
-    setState(() {
-      _isSubmitting = true;
-    });
+    setState(() => _isSubmitting = true);
 
     try {
-      final uid = FirebaseAuth.instance.currentUser!.uid;
+      final auth = context.read<app_auth.AuthProvider>();
+      final user = auth.currentUser;
+
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You must be signed in to submit feedback')),
+        );
+        return false;
+      }
 
       final feedback = UserFeedback(
         id: '',
         message: _feedbackCtrl.text.trim(),
         rating: _rating,
-        createdBy: uid,
+        createdBy: user.uid,
         createdAt: DateTime.now(),
       );
 
@@ -48,17 +55,16 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
       );
 
       return true;
-    } catch (e) {
+    } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to submit feedback')),
       );
       return false;
     } finally {
-      setState(() {
-        _isSubmitting = false;
-      });
+      setState(() => _isSubmitting = false);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

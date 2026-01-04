@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
 import 'package:locai/widgets/custom_app_bar.dart';
 import 'package:locai/models/search_history.dart';
 import 'package:locai/repositories/recent_searches_repository.dart';
 import 'package:locai/providers/search_provider.dart';
+import 'package:locai/providers/auth_provider.dart';
+
 
 class RecentSearchesPage extends StatefulWidget {
   const RecentSearchesPage({super.key});
@@ -16,17 +17,27 @@ class RecentSearchesPage extends StatefulWidget {
 
 class _RecentSearchesPageState extends State<RecentSearchesPage> {
   late final RecentSearchesRepository _repo;
-  late final String _uid;
 
   @override
   void initState() {
     super.initState();
-    _uid = FirebaseAuth.instance.currentUser!.uid;
     _repo = RecentSearchesRepository();
   }
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
+    final user = authProvider.currentUser;
+
+    // Handle logged-out state safely
+    if (user == null) {
+      return const Scaffold(
+        body: Center(child: Text('Please log in to see recent searches.')),
+      );
+    }
+
+    final uid = user.uid;
+
     return Scaffold(
       appBar: const CustomAppBar(
         title: 'Recent Searches',
@@ -36,7 +47,7 @@ class _RecentSearchesPageState extends State<RecentSearchesPage> {
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: StreamBuilder<List<SearchHistory>>(
-          stream: _repo.watchSearches(_uid),
+          stream: _repo.watchSearches(uid),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());

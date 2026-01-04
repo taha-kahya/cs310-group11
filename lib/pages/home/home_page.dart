@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:locai/providers/auth_provider.dart';
 
 import 'package:locai/widgets/place_card.dart';
 import 'package:locai/utils/text_styles.dart';
@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
     _filteredPlaces = List.from(_allPlaces);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final user = FirebaseAuth.instance.currentUser;
+      final user = context.read<AuthProvider>().currentUser;
       if (user != null) {
         context.read<FavoritesProvider>().start(user.uid);
       }
@@ -94,20 +94,16 @@ class _HomePageState extends State<HomePage> {
       final trimmed = value.trim();
       if (trimmed.isNotEmpty && trimmed != _lastSavedQuery) {
         _lastSavedQuery = trimmed;
-        final user = FirebaseAuth.instance.currentUser;
+        final user = context.read<AuthProvider>().currentUser;
         if (user != null) {
-          try {
-            await _searchRepo.addSearch(
-              SearchHistory(
-                id: '',
-                query: trimmed,
-                createdBy: user.uid,
-                createdAt: DateTime.now(),
-              ),
-            );
-          } catch (_) {
-            // ignore
-          }
+          await _searchRepo.addSearch(
+            SearchHistory(
+              id: '',
+              query: trimmed,
+              createdBy: user.uid,
+              createdAt: DateTime.now(),
+            ),
+          );
         }
       }
 
@@ -138,7 +134,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final favProvider = context.watch<FavoritesProvider>();
-    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final authProvider = context.watch<AuthProvider>();
+    final uid = authProvider.currentUser!.uid;
 
     final searchProvider = context.watch<SearchProvider>();
     final providerQuery = searchProvider.query;
