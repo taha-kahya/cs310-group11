@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class PlaceReviewsService {
-  static const String _apiKey = 'AIzaSyCOgM-1q3il6YJqZiNmXnZeeYH1RiovkZY';
+  static const String _apiKey = 'enter_your_google_maps_api_key';
 
   /// Fetch reviews for a place using place ID
   static Future<List<Map<String, dynamic>>> getReviews(String placeId) async {
