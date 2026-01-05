@@ -59,6 +59,15 @@ cd locai
 flutter pub get
 ```
 
+### Warning: About API Keys
+
+This app depends on Google Maps API and Gemini API. Because api keys gets automatically invalidated by google once they are pushed to the repository, you must generate and enter your own API key to test this application. Please enter your api key in the following files:
+
+-  services/ai_summary_service.dart (Gemini)
+-  services/place_photo_service.dart (Google Maps)
+-  services/places_text_search_service.dart (Google Maps)
+-  services/place_reviews_service.dart (Google Maps)
+
 ### Firebase Configuration (for running the app)
 
 - Create a Firebase project
