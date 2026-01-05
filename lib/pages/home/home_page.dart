@@ -168,14 +168,6 @@ class _HomePageState extends State<HomePage> {
         }
       }
 
-      if (results.isEmpty) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => NoPlacesFoundPage(query: value),
-          ),
-        );
-      }
     }
 
     setState(() {
@@ -188,6 +180,7 @@ class _HomePageState extends State<HomePage> {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 450), () {
       _searchPlacesFromApi(value);
+      _onSearchChanged(value);
     });
   }
 
@@ -243,6 +236,7 @@ class _HomePageState extends State<HomePage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _searchController.text = providerQuery;
         _searchPlacesFromApi(providerQuery);
+        _onSearchChanged(providerQuery);
         searchProvider.clear();
       });
     }

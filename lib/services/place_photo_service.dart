@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class PlacePhotoService {
-  static const String _apiKey = 'enter_your_google_maps_api_key';
+  static const String _apiKey = 'Enter Google Places API key here.';
 
   /// Get photo URL directly - returns the media URL that can be used in Image.network()
   /// photoName format: "places/{place_id}/photos/{photo_reference}"

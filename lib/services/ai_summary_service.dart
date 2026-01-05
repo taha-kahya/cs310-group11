@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AISummaryService {
-  static const String _apiKey = 'enter_your_gemini_api_key';
+  static const String _apiKey = 'Enter Gemini API key here.';
   static const String _endpoint =
       'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent';
 
@@ -20,6 +20,9 @@ class AISummaryService {
             {
               'text': '''
 Summarize the following restaurant reviews.
+USE ONLY MAXIMUM 3 WORDS FOR EACH description
+IF THE OUTPUT IS ABOUT TO PASS 3000 MAX TOKENS JUST CUT THE PART
+THAT MAKES THE OUTPUT NOT FINISHED AND FINISH THE OUTPUT IN THE GIVEN FORMAT.
 
 Respond ONLY with JSON in this exact format:
 
@@ -39,7 +42,7 @@ $reviewsText
       ],
       'generationConfig': {
         'temperature': 0.1,
-        'maxOutputTokens': 800
+        'maxOutputTokens': 3000
       }
     });
 
