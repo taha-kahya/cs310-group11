@@ -5,12 +5,14 @@ class Place {
   final double rating;
   final String description;
   final String imageUrl;
+  final String placeId;
 
   const Place({
     required this.name,
     required this.rating,
     required this.description,
     required this.imageUrl,
+    this.placeId = '',
   });
 }
 

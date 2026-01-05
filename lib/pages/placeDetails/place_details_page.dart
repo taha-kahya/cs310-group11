@@ -1,9 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:locai/widgets/place_card.dart';
 import 'package:locai/utils/text_styles.dart';
+import 'package:locai/services/place_reviews_service.dart';
+import 'package:locai/services/ai_summary_service.dart';
 
-class PlaceDetailsPage extends StatelessWidget {
+class PlaceDetailsPage extends StatefulWidget {
   const PlaceDetailsPage({super.key});
+
+  @override
+  State<PlaceDetailsPage> createState() => _PlaceDetailsPageState();
+}
+
+class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
+  Map<String, dynamic>? _aiSummary;
+  bool _isLoadingSummary = true;
+  String? _error;
+  bool _hasLoaded = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_hasLoaded) {
+      _hasLoaded = true;
+      _loadAISummary();
+    }
+  }
+
+  Future<void> _loadAISummary() async {
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is! Place) {
+      setState(() {
+        _isLoadingSummary = false;
+        _error = 'Invalid place data';
+      });
+      return;
+    }
+
+    final place = args;
+
+    if (place.placeId.isEmpty) {
+      setState(() {
+        _isLoadingSummary = false;
+        _error = 'No place ID available';
+      });
+      return;
+    }
+
+    try {
+      final reviews = await PlaceReviewsService.getLastNReviews(
+        place.placeId,
+        count: 5,
+      );
+
+      if (reviews.isEmpty) {
+        setState(() {
+          _isLoadingSummary = false;
+          _error = 'No reviews available';
+        });
+        return;
+      }
+
+      final reviewsText =
+      PlaceReviewsService.formatReviewsForSummary(reviews);
+
+      final summary =
+      await AISummaryService.summarizeReviews(reviewsText);
+
+      setState(() {
+        _aiSummary = summary;
+        _isLoadingSummary = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingSummary = false;
+        _error = 'Failed to load summary';
+      });
+      debugPrint('Error loading AI summary: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +108,6 @@ class PlaceDetailsPage extends StatelessWidget {
           ),
         ),
       ),
-
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(40, 0, 40, 30),
         child: SizedBox(
@@ -59,7 +132,6 @@ class PlaceDetailsPage extends StatelessWidget {
           ),
         ),
       ),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 80),
         child: Column(
@@ -87,8 +159,9 @@ class PlaceDetailsPage extends StatelessWidget {
                       boxShadow: [
                         BoxShadow(
                           blurRadius: 4,
-                          color:
-                          Theme.of(context).shadowColor.withOpacity(0.12),
+                          color: Theme.of(context)
+                              .shadowColor
+                              .withOpacity(0.12),
                         ),
                       ],
                     ),
@@ -115,89 +188,131 @@ class PlaceDetailsPage extends StatelessWidget {
                 ),
               ],
             ),
-
-            const SizedBox(height: 24),
-
-            // AI Summary header
+            const SizedBox(height: 28),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'AI Summary',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: colors.onSurface,
-                ),
+              child: Row(
+                children: [
+                  Container(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          colors.primary,
+                          colors.primary.withOpacity(0.7),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.auto_awesome,
+                            size: 14, color: Colors.white),
+                        SizedBox(width: 6),
+                        Text(
+                          'AI Summary',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-
             const SizedBox(height: 12),
-
-            // Summary box
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
                 width: double.infinity,
                 padding:
-                const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                 decoration: BoxDecoration(
-                  color: colors.surface,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Here are some key points:',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: colors.onSurface,
-                      ),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      colors.surface,
+                      colors.surface.withOpacity(0.95),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
+                      color:
+                      Theme.of(context).shadowColor.withOpacity(0.08),
                     ),
-                    const SizedBox(height: 10),
-                    _BulletText('Customer favourite: Bento with sashimi'),
-                    _BulletText('Atmosphere: Calm and cozy'),
-                    _BulletText('Accessibility: Wheelchair accessible'),
                   ],
                 ),
+                child: _buildSummaryContent(colors),
               ),
             ),
-
-            const SizedBox(height: 32),
-
-            // General Information heading
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'General Information',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: colors.onSurface,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            // Opening hours
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'Opening Hours: 11.00 – 21.00',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: colors.onSurface.withOpacity(0.75),
-                  height: 1.5,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSummaryContent(ColorScheme colors) {
+    if (_isLoadingSummary) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(20.0),
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (_error != null || _aiSummary == null) {
+      return Column(
+        children: [
+          Icon(Icons.info_outline,
+              color: colors.onSurface.withOpacity(0.5)),
+          const SizedBox(height: 8),
+          Text(
+            _error ?? 'Unable to generate summary',
+            style: TextStyle(
+              fontSize: 13,
+              color: colors.onSurface.withOpacity(0.7),
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      );
+    }
+
+    final favoriteItem = _aiSummary!['favorite_item'] as String? ?? '';
+    final atmosphere = _aiSummary!['atmosphere'] as String? ?? '';
+    final accessibility = _aiSummary!['accessibility'] as String? ?? '';
+    final highlights = _aiSummary!['highlights'] as List<dynamic>? ?? [];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Based on recent reviews',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: colors.onSurface,
+          ),
+        ),
+        const SizedBox(height: 14),
+        if (favoriteItem.isNotEmpty)
+          _BulletText('Customer favourite: $favoriteItem'),
+        if (atmosphere.isNotEmpty)
+          _BulletText('Atmosphere: $atmosphere'),
+        if (accessibility.isNotEmpty)
+          _BulletText('Accessibility: $accessibility'),
+        if (highlights.isNotEmpty)
+          ...highlights.map((h) => _BulletText(h.toString())),
+      ],
     );
   }
 }
@@ -211,25 +326,27 @@ class _BulletText extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '•  ',
-            style: TextStyle(
-              fontSize: 13,
-              height: 1.4,
-              color: colors.onSurface,
+          Container(
+            margin: const EdgeInsets.only(top: 6),
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+              color: colors.primary,
+              shape: BoxShape.circle,
             ),
           ),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               text,
               style: TextStyle(
-                fontSize: 13,
+                fontSize: 13.5,
                 color: colors.onSurface,
-                height: 1.4,
+                height: 1.5,
               ),
             ),
           ),

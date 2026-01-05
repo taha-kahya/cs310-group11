@@ -74,12 +74,15 @@ class _HomePageState extends State<HomePage> {
           }
         }
 
+        final placeId = item['id'] ?? '';
+
         places.add(
           Place(
             name: displayName,
             rating: rating,
             description: address,
             imageUrl: imageUrl,
+            placeId: placeId,
           ),
         );
       }
