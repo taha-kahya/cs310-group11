@@ -3,6 +3,7 @@ import 'package:locai/widgets/place_card.dart';
 import 'package:locai/utils/text_styles.dart';
 import 'package:locai/services/place_reviews_service.dart';
 import 'package:locai/services/ai_summary_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PlaceDetailsPage extends StatefulWidget {
   const PlaceDetailsPage({super.key});
@@ -79,6 +80,16 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
     }
   }
 
+  Future<void> _openRoute(String placeName) async {
+    final encoded = Uri.encodeComponent(placeName);
+    final uri = Uri.parse(
+        'https://www.google.com/maps/dir/?api=1&destination=$encoded');
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)?.settings.arguments;
@@ -121,7 +132,7 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            onPressed: () {},
+            onPressed: () => _openRoute(place.name),
             child: const Text(
               'Create Route',
               style: TextStyle(
