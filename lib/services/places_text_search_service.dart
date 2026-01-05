@@ -5,7 +5,7 @@ class PlacesTextSearchService {
   static const String _endpoint =
       'https://places.googleapis.com/v1/places:searchText';
 
-  static const String _apiKey = 'Enter the API key here.';
+  static const String _apiKey = 'AIzaSyCOgM-1q3il6YJqZiNmXnZeeYH1RiovkZY';
 
   static Future<List<Map<String, dynamic>>> search({
     required String query,
@@ -15,8 +15,9 @@ class PlacesTextSearchService {
     final headers = {
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': _apiKey,
+      // ✅ Updated field mask to include rating and photos
       'X-Goog-FieldMask':
-      'places.id,places.displayName,places.formattedAddress,places.location',
+      'places.id,places.displayName,places.formattedAddress,places.location,places.rating,places.photos',
     };
 
     final body = {

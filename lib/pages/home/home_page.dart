@@ -25,13 +25,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool _isLoading = false;
+
   Future<void> _searchPlacesFromApi(String query) async {
     if (query.trim().isEmpty) {
       setState(() {
         _filteredPlaces = List.from(_allPlaces);
+        _isLoading = false;
       });
       return;
     }
+
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
       final apiResults = await PlacesTextSearchService.search(
@@ -50,10 +57,12 @@ class _HomePageState extends State<HomePage> {
         final photos = item['photos'];
         if (photos != null && photos.isNotEmpty) {
           final photoName = photos.first['name'];
-          final photoUrl =
-          await PlacePhotoService.getPhotoUrl(photoName);
-          if (photoUrl != null) {
-            imageUrl = photoUrl;
+          if (photoName != null) {
+            imageUrl = PlacePhotoService.getPhotoUrlDirect(
+              photoName,
+              maxWidth: 400,
+              maxHeight: 400,
+            );
           }
         }
 
@@ -78,13 +87,15 @@ class _HomePageState extends State<HomePage> {
 
       setState(() {
         _filteredPlaces = places;
+        _isLoading = false;
       });
     } catch (e) {
       debugPrint('Places API error: $e');
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
-
-
 
   late List<Place> _allPlaces;
   late List<Place> _filteredPlaces;
@@ -100,30 +111,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    _allPlaces = const [
-      Place(
-        name: 'Sushico',
-        rating: 4.9,
-        description:
-        'Fresh Asian fusion with sushi, noodles, and bold flavors served in a modern, cozy setting.',
-        imageUrl: "assets/images/temp_image_1.jpg",
-      ),
-      Place(
-        name: 'RamenToGo',
-        rating: 4.9,
-        description:
-        'Quick, fresh, and flavorful ramen made for comfort on the go.',
-        imageUrl: "assets/images/temp_image_2.jpg",
-      ),
-      Place(
-        name: 'Japanese Fried Chicken',
-        rating: 4.6,
-        description:
-        'Crispy, juicy bites served in a comfy, quiet place with convenient charging outlets.',
-        imageUrl: "assets/images/temp_image_3.jpg",
-      ),
-    ];
-
+    _allPlaces = const [];
     _filteredPlaces = List.from(_allPlaces);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -193,6 +181,47 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // ---------------- EMPTY STATE WIDGET ----------------
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.search_rounded,
+              size: 80,
+              color: Colors.grey.shade400,
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Start Your Search',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Results will appear once you search for a place',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey.shade600,
+                height: 1.5,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   // ---------------- UI ----------------
 
   @override
@@ -236,59 +265,65 @@ class _HomePageState extends State<HomePage> {
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide:
-                  BorderSide(color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.grey.shade700
-                      : const Color(0xFFE0E0E0)),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey.shade700
+                          : const Color(0xFFE0E0E0)),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide:
-                  BorderSide(color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.grey.shade700
-                      : const Color(0xFFE0E0E0)),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey.shade700
+                          : const Color(0xFFE0E0E0)),
                 ),
               ),
             ),
           ),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-            child: Row(
-              children: [
-                const Text('Sort by', style: TextStyle(color: Colors.grey)),
-                const SizedBox(width: 8),
-                DropdownButton<String>(
-                  value: _selectedSort,
-                  underline: const SizedBox(),
-                  items: const [
-                    DropdownMenuItem(
-                        value: 'Relevance', child: Text('Relevance')),
-                    DropdownMenuItem(value: 'Rating', child: Text('Rating')),
-                    DropdownMenuItem(
-                        value: 'Distance', child: Text('Distance')),
-                  ],
-                  onChanged: (value) {
-                    if (value == null) return;
-                    setState(() => _selectedSort = value);
-                  },
-                ),
-              ],
+          if (_filteredPlaces.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+              child: Row(
+                children: [
+                  const Text('Sort by', style: TextStyle(color: Colors.grey)),
+                  const SizedBox(width: 8),
+                  DropdownButton<String>(
+                    value: _selectedSort,
+                    underline: const SizedBox(),
+                    items: const [
+                      DropdownMenuItem(
+                          value: 'Relevance', child: Text('Relevance')),
+                      DropdownMenuItem(value: 'Rating', child: Text('Rating')),
+                      DropdownMenuItem(
+                          value: 'Distance', child: Text('Distance')),
+                    ],
+                    onChanged: (value) {
+                      if (value == null) return;
+                      setState(() => _selectedSort = value);
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Found ${_filteredPlaces.length} results',
-              style: const TextStyle(fontSize: 13, color: Colors.grey),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Found ${_filteredPlaces.length} results',
+                style: const TextStyle(fontSize: 13, color: Colors.grey),
+              ),
             ),
-          ),
-
-          const SizedBox(height: 8),
+            const SizedBox(height: 8),
+          ],
 
           Expanded(
-            child: ListView.builder(
+            child: _isLoading
+                ? const Center(
+              child: CircularProgressIndicator(),
+            )
+                : _filteredPlaces.isEmpty
+                ? _buildEmptyState()
+                : ListView.builder(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               itemCount: _filteredPlaces.length,
               itemBuilder: (context, index) {
