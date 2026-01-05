@@ -14,6 +14,9 @@ import 'package:locai/models/favorite_place.dart';
 import 'package:locai/models/search_history.dart';
 import 'package:locai/repositories/recent_searches_repository.dart';
 
+import 'package:locai/services/places_text_search_service.dart';
+import 'package:locai/services/place_photo_service.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -22,6 +25,67 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Future<void> _searchPlacesFromApi(String query) async {
+    if (query.trim().isEmpty) {
+      setState(() {
+        _filteredPlaces = List.from(_allPlaces);
+      });
+      return;
+    }
+
+    try {
+      final apiResults = await PlacesTextSearchService.search(
+        query: query,
+      );
+
+      final List<Place> places = [];
+
+      for (final item in apiResults) {
+        final displayName = item['displayName']?['text'] ?? 'Unknown';
+        final address = item['formattedAddress'] ?? '';
+        final rating = (item['rating'] ?? 0).toDouble();
+
+        String imageUrl = 'assets/images/temp_image_1.jpg';
+
+        final photos = item['photos'];
+        if (photos != null && photos.isNotEmpty) {
+          final photoName = photos.first['name'];
+          final photoUrl =
+          await PlacePhotoService.getPhotoUrl(photoName);
+          if (photoUrl != null) {
+            imageUrl = photoUrl;
+          }
+        }
+
+        places.add(
+          Place(
+            name: displayName,
+            rating: rating,
+            description: address,
+            imageUrl: imageUrl,
+          ),
+        );
+      }
+
+      if (places.isEmpty) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => NoPlacesFoundPage(query: query),
+          ),
+        );
+      }
+
+      setState(() {
+        _filteredPlaces = places;
+      });
+    } catch (e) {
+      debugPrint('Places API error: $e');
+    }
+  }
+
+
+
   late List<Place> _allPlaces;
   late List<Place> _filteredPlaces;
 
@@ -125,7 +189,7 @@ class _HomePageState extends State<HomePage> {
   void _onSearchChangedDebounced(String value) {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 450), () {
-      _onSearchChanged(value);
+      _searchPlacesFromApi(value); // ✅ API SEARCH
     });
   }
 
@@ -143,7 +207,7 @@ class _HomePageState extends State<HomePage> {
     if (providerQuery != null && providerQuery.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _searchController.text = providerQuery;
-        _onSearchChanged(providerQuery);
+        _searchPlacesFromApi(providerQuery);
         searchProvider.clear(); // consume once
       });
     }
