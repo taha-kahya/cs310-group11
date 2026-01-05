@@ -110,6 +110,6 @@ These tests ensure that user input validation works correctly and that authentic
 
 ## Known Limitations and Bugs
 
-[Update this part]
-
-- Google Maps API is going to integrated in the last step of the project. For now, in the home page, we still display placeholder data.
+- Forgot password feature is not functional.
+- The app depends on Google Maps API and Gemini API, and we have used free tiers throughout the development. However, the app may not function if the quota is exceeded.
+- In home page, we have a sorting option for the listed results. The distance metric doesn't work for now, only the rating and most relevant options work. 
