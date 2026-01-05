@@ -44,7 +44,13 @@ class _SuggestionsPageState extends State<SuggestionsPage> {
 
   void _onSuggestionTap(String suggestion) {
     context.read<SearchProvider>().setQuery(suggestion);
-    Navigator.pop(context);
+
+    // IMPORTANT:
+    // If SuggestionsPage is a TAB inside MainShell, do NOT pop.
+    // If it was opened with Navigator.push, then pop is fine.
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -75,7 +81,6 @@ class _SuggestionsPageState extends State<SuggestionsPage> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-
             Expanded(
               child: StreamBuilder<List<SearchHistory>>(
                 stream: _repo.watchSearches(user.uid),
@@ -87,10 +92,8 @@ class _SuggestionsPageState extends State<SuggestionsPage> {
                   }
 
                   final histories = snapshot.data!;
-                  final pastQueries =
-                  histories.map((e) => e.query).toList();
+                  final pastQueries = histories.map((e) => e.query).toList();
 
-                  // ✅ Schedule AI call AFTER build (SAFE)
                   if (!_hasRequested) {
                     _hasRequested = true;
                     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -117,8 +120,7 @@ class _SuggestionsPageState extends State<SuggestionsPage> {
 
                   return ListView.separated(
                     itemCount: _suggestions.length,
-                    separatorBuilder: (_, __) =>
-                    const SizedBox(height: 8),
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
                     itemBuilder: (context, index) {
                       final suggestion = _suggestions[index];
 
