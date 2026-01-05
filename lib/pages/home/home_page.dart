@@ -27,6 +27,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool _isLoading = false;
 
+  void _applySorting() {
+    if (_selectedSort == 'Rating') {
+      _filteredPlaces.sort((a, b) => b.rating.compareTo(a.rating));
+    } else if (_selectedSort == 'Distance') {
+      return;
+    }
+  }
+
   Future<void> _searchPlacesFromApi(String query) async {
     if (query.trim().isEmpty) {
       setState(() {
@@ -87,6 +95,7 @@ class _HomePageState extends State<HomePage> {
 
       setState(() {
         _filteredPlaces = places;
+        _applySorting();
         _isLoading = false;
       });
     } catch (e) {
@@ -129,8 +138,6 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  // ---------------- SEARCH LOGIC ----------------
-
   void _onSearchChanged(String value) async {
     final query = value.toLowerCase();
     List<Place> results;
@@ -142,7 +149,6 @@ class _HomePageState extends State<HomePage> {
           .where((place) => place.name.toLowerCase().contains(query))
           .toList();
 
-      // Save to recent searches (avoid duplicates)
       final trimmed = value.trim();
       if (trimmed.isNotEmpty && trimmed != _lastSavedQuery) {
         _lastSavedQuery = trimmed;
@@ -171,17 +177,16 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       _filteredPlaces = results;
+      _applySorting();
     });
   }
 
   void _onSearchChangedDebounced(String value) {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 450), () {
-      _searchPlacesFromApi(value); // ✅ API SEARCH
+      _searchPlacesFromApi(value);
     });
   }
-
-  // ---------------- EMPTY STATE WIDGET ----------------
 
   Widget _buildEmptyState() {
     return Center(
@@ -222,8 +227,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // ---------------- UI ----------------
-
   @override
   Widget build(BuildContext context) {
     final favProvider = context.watch<FavoritesProvider>();
@@ -237,7 +240,7 @@ class _HomePageState extends State<HomePage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _searchController.text = providerQuery;
         _searchPlacesFromApi(providerQuery);
-        searchProvider.clear(); // consume once
+        searchProvider.clear();
       });
     }
 
@@ -280,7 +283,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-
           if (_filteredPlaces.isNotEmpty) ...[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
@@ -300,7 +302,10 @@ class _HomePageState extends State<HomePage> {
                     ],
                     onChanged: (value) {
                       if (value == null) return;
-                      setState(() => _selectedSort = value);
+                      setState(() {
+                        _selectedSort = value;
+                        _applySorting();
+                      });
                     },
                   ),
                 ],
@@ -315,21 +320,20 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 8),
           ],
-
           Expanded(
             child: _isLoading
-                ? const Center(
-              child: CircularProgressIndicator(),
-            )
+                ? const Center(child: CircularProgressIndicator())
                 : _filteredPlaces.isEmpty
                 ? _buildEmptyState()
                 : ListView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              padding:
+              const EdgeInsets.fromLTRB(16, 0, 16, 16),
               itemCount: _filteredPlaces.length,
               itemBuilder: (context, index) {
                 final place = _filteredPlaces[index];
                 final placeId = place.name;
-                final isFav = favProvider.isFavorite(placeId);
+                final isFav =
+                favProvider.isFavorite(placeId);
 
                 return PlaceCard(
                   key: ValueKey(placeId),
