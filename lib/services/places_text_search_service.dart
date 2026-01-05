@@ -5,8 +5,7 @@ class PlacesTextSearchService {
   static const String _endpoint =
       'https://places.googleapis.com/v1/places:searchText';
 
-  // TEMPORARY for course project
-  static const String _apiKey = 'AIzaSyBfnTlli4YB1Y0t_duse8d0gmzwjDp3A2k';
+  static const String _apiKey = 'Enter the API key here.';
 
   static Future<List<Map<String, dynamic>>> search({
     required String query,
